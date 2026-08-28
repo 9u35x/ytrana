@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+  <title>Ytrana</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="dir-rtl">
+  <header class="y-header" id="y-header"></header>
+
+  <main class="container">
+    <div class="card composer">
+      <div class="composer-top">
+        <div id="composer-avatar"></div>
+        <textarea id="composer-text" placeholder="بم تفكر؟" maxlength="3000"></textarea>
+      </div>
+      <div class="composer-preview" id="composer-preview">
+        <img id="composer-preview-img" src="" alt="معاينة الصورة">
+        <button type="button" class="remove-img" id="composer-remove-img">✕</button>
+      </div>
+      <div class="composer-actions">
+        <label class="btn btn-outline btn-sm" style="cursor:pointer;">
+          📷 صورة
+          <input type="file" id="composer-image-input" accept="image/jpeg,image/png,image/webp,image/gif" hidden>
+        </label>
+        <button type="button" id="composer-submit" class="btn btn-primary btn-sm">نشر</button>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab-btn active" id="feed-tab-following">أتابعهم</button>
+      <button class="tab-btn" id="feed-tab-explore">استكشف</button>
+    </div>
+
+    <div id="feed-list"></div>
+  </main>
+
+  <nav class="y-bottom-nav" id="y-bottom-nav"></nav>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/toast.js"></script>
+  <script src="js/avatar.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/post-card.js"></script>
+  <script src="js/feed.js"></script>
+</body>
+</html>

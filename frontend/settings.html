@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+  <title>الإعدادات — Ytrana</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="dir-rtl">
+  <header class="y-header" id="y-header"></header>
+
+  <main class="container">
+    <div class="settings-section">
+      <div class="settings-section-title">الملف الشخصي</div>
+      <div class="card" style="padding: var(--y-space-4);">
+        <div style="display:flex; flex-direction:column; align-items:center; gap:10px; margin-bottom:var(--y-space-4);">
+          <div id="settings-avatar"></div>
+          <label class="btn btn-outline btn-sm" style="cursor:pointer;">
+            تغيير الصورة
+            <input type="file" id="avatar-input" accept="image/jpeg,image/png,image/webp,image/gif" hidden>
+          </label>
+        </div>
+        <form id="profile-form">
+          <div class="form-group">
+            <label class="form-label" for="settings-fullname">الاسم</label>
+            <input type="text" id="settings-fullname" class="form-control" maxlength="100" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="settings-bio">نبذة (Bio)</label>
+            <textarea id="settings-bio" class="form-control" maxlength="160" rows="3"></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">حفظ التغييرات</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-section-title">كلمة المرور</div>
+      <div class="card" style="padding: var(--y-space-4);">
+        <form id="password-form">
+          <div class="form-group">
+            <label class="form-label" for="current-password">كلمة المرور الحالية</label>
+            <input type="password" id="current-password" class="form-control" autocomplete="current-password" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="new-password">كلمة المرور الجديدة</label>
+            <input type="password" id="new-password" class="form-control" autocomplete="new-password" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="new-password2">تأكيد كلمة المرور الجديدة</label>
+            <input type="password" id="new-password2" class="form-control" autocomplete="new-password" required>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">تغيير كلمة المرور</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-section-title">الحساب</div>
+      <div class="card">
+        <div class="settings-row">
+          <span>تسجيل الخروج</span>
+          <button id="logout-btn" class="btn btn-outline btn-sm">خروج</button>
+        </div>
+        <div class="settings-row">
+          <span>حذف الحساب نهائيًا</span>
+          <button id="delete-account-btn" class="btn btn-danger btn-sm">حذف</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <nav class="y-bottom-nav" id="y-bottom-nav"></nav>
+
+  <div class="modal-overlay" id="delete-modal">
+    <div class="modal-box">
+      <div class="modal-title">تأكيد حذف الحساب</div>
+      <p class="form-hint">هذا الإجراء نهائي ولا يمكن التراجع عنه. أدخل كلمة المرور للتأكيد.</p>
+      <form id="delete-confirm-form">
+        <div class="form-group mt-4">
+          <input type="password" id="delete-password" class="form-control" placeholder="كلمة المرور" required>
+        </div>
+        <div class="modal-actions">
+          <button type="button" id="delete-cancel" class="btn btn-outline btn-block">إلغاء</button>
+          <button type="submit" class="btn btn-danger btn-block">حذف نهائيًا</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/toast.js"></script>
+  <script src="js/avatar.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/settings.js"></script>
+</body>
+</html>
