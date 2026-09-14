@@ -236,6 +236,7 @@ class ReportOut(BaseModel):
     reason: str
     status: str
     created_at: datetime
+    
     reporter: UserPublic
 
     model_config = ConfigDict(from_attributes=True)
@@ -245,3 +246,82 @@ class ReportOut(BaseModel):
 
 class Message(BaseModel):
     message: str
+# ==================== V2: الدردشة والمزاج ====================
+
+class MessageCreate(BaseModel):
+    content: str
+
+    @field_validator("content")
+    @classmethod
+    def validate_content(cls, v: str) -> str:
+        v = v.strip()
+        if len(v) < 1:
+            raise ValueError("الرسالة لا يمكن أن تكون فارغة")
+        if len(v) > 2000:
+            raise ValueError("الرسالة طويلة جدًا (الحد الأقصى 2000 حرف)")
+        return v
+
+
+class MessageOut(BaseModel):
+    id: int
+    conversation_id: int
+    content: str
+    is_read: bool
+    created_at: datetime
+    sender: UserPublic
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class ConversationOut(BaseModel):
+    id: int
+    other_user: UserPublic
+    last_message: Optional[str] = None
+    last_message_at: Optional[datetime] = None
+    unread_count: int = 0
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class MoodOut(BaseModel):
+    id: int
+    key: str
+    label_ar: str
+    emoji: str
+    color: str
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class MoodStatusCreate(BaseModel):
+    mood_key: str
+    note: Optional[str] = None
+
+    @field_validator("mood_key")
+    @classmethod
+    def validate_mood_key(cls, v: str) -> str:
+        v = v.strip().lower()
+        if len(v) < 1 or len(v) > 30:
+            raise ValueError("المزاج غير صالح")
+        return v
+
+    @field_validator("note")
+    @classmethod
+    def validate_note(cls, v):
+        if v is None:
+            return v
+        v = v.strip()
+        if len(v) > 120:
+            raise ValueError("الملاحظة طويلة جدًا (الحد الأقصى 120 حرف)")
+        return v
+
+
+class MoodStatusOut(BaseModel):
+    id: int
+    mood: MoodOut
+    note: Optional[str] = None
+    created_at: datetime
+    expires_at: datetime
+    user: UserPublic
+
+    model_config = ConfigDict(from_attributes=True)
