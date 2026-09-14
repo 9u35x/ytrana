@@ -160,3 +160,59 @@ class Report(Base):
     created_at = Column(DateTime(timezone=True), default=utcnow, nullable=False)
 
     reporter = relationship("User", foreign_keys=[reporter_id])
+    # ==================== V2: الدردشة والمزاج ====================
+
+class Conversation(Base):
+    __tablename__ = "conversations"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user1_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    user2_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    last_message_at = Column(DateTime, default=datetime.utcnow, index=True)
+
+    __table_args__ = (
+        UniqueConstraint("user1_id", "user2_id", name="uq_conversation_pair"),
+    )
+
+    user1 = relationship("User", foreign_keys=[user1_id])
+    user2 = relationship("User", foreign_keys=[user2_id])
+    messages = relationship("Message", back_populates="conversation", cascade="all, delete-orphan")
+
+
+class Message(Base):
+    __tablename__ = "messages"
+
+    id = Column(Integer, primary_key=True, index=True)
+    conversation_id = Column(Integer, ForeignKey("conversations.id", ondelete="CASCADE"), nullable=False, index=True)
+    sender_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    content = Column(String(2000), nullable=False)
+    is_read = Column(Boolean, default=False, index=True)
+    created_at = Column(DateTime, default=datetime.utcnow, index=True)
+
+    conversation = relationship("Conversation", back_populates="messages")
+    sender = relationship("User")
+
+
+class Mood(Base):
+    __tablename__ = "moods"
+
+    id = Column(Integer, primary_key=True, index=True)
+    key = Column(String(30), unique=True, nullable=False)
+    label_ar = Column(String(50), nullable=False)
+    emoji = Column(String(10), nullable=False)
+    color = Column(String(20), nullable=False)
+
+
+class MoodStatus(Base):
+    __tablename__ = "mood_status"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    mood_id = Column(Integer, ForeignKey("moods.id"), nullable=False)
+    note = Column(String(120), nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow, index=True)
+    expires_at = Column(DateTime, nullable=False, index=True)
+
+    user = relationship("User")
+    mood = relationship("Mood")
