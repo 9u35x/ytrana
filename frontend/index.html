@@ -5,11 +5,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
   <title>Ytrana</title>
   <link rel="stylesheet" href="css/style.css">
+  <style>
+    #mood-bar { display: flex; gap: 14px; overflow-x: auto; padding: 14px 4px; margin-bottom: 8px; }
+    .mood-item { display: flex; flex-direction: column; align-items: center; gap: 4px; flex-shrink: 0; cursor: pointer; width: 64px; }
+    .mood-ring { width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 26px; border: 2px dashed #ccc; }
+    .mood-ring.has-mood { border: 3px solid var(--mood-color, #7C5CFF); background: color-mix(in srgb, var(--mood-color, #7C5CFF) 15%, transparent); }
+    .mood-ring.empty { border: 2px dashed #b9b9c7; }
+    .mood-item-label { font-size: 11px; color: var(--y-text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 64px; }
+    #mood-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: flex-end; z-index: 60; }
+    #mood-modal.show { display: flex; }
+    .mood-modal-box { background: var(--y-bg, #fff); width: 100%; border-radius: 20px 20px 0 0; padding: 20px; max-height: 70vh; overflow-y: auto; }
+    .mood-modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    #mood-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .mood-option { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 14px 8px; border-radius: 14px; border: 2px solid var(--mood-color, #ddd); background: none; cursor: pointer; font-size: 13px; }
+    .mood-option-emoji { font-size: 28px; }
+  </style>
 </head>
 <body class="dir-rtl">
   <header class="y-header" id="y-header"></header>
 
   <main class="container">
+    <div id="mood-bar"></div>
+
     <div class="card composer">
       <div class="composer-top">
         <div id="composer-avatar"></div>
@@ -36,6 +53,16 @@
     <div id="feed-list"></div>
   </main>
 
+  <div id="mood-modal">
+    <div class="mood-modal-box">
+      <div class="mood-modal-header">
+        <strong>وش مزاجك اليوم؟</strong>
+        <button type="button" id="mood-modal-close" class="icon-btn-plain" style="background:none;border:none;font-size:20px;">✕</button>
+      </div>
+      <div id="mood-grid"></div>
+    </div>
+  </div>
+
   <nav class="y-bottom-nav" id="y-bottom-nav"></nav>
 
   <script src="js/config.js"></script>
@@ -47,5 +74,6 @@
   <script src="js/layout.js"></script>
   <script src="js/post-card.js"></script>
   <script src="js/feed.js"></script>
+  <script src="js/mood.js"></script>
 </body>
 </html>
