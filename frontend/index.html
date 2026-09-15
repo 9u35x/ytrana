@@ -32,22 +32,27 @@
         <div id="composer-avatar"></div>
         <textarea id="composer-text" placeholder="بم تفكر؟" maxlength="3000"></textarea>
       </div>
+
       <div class="composer-preview" id="composer-preview">
         <img id="composer-preview-img" src="" alt="معاينة الصورة">
         <button type="button" class="remove-img" id="composer-remove-img">✕</button>
       </div>
+
       <div class="composer-actions">
         <label class="btn btn-outline btn-sm" style="cursor:pointer;">
           📷 صورة
           <input type="file" id="composer-image-input" accept="image/jpeg,image/png,image/webp,image/gif" hidden>
         </label>
-        <button type="button" id="composer-submit" class="btn btn-primary btn-sm">نشر</button>
+
+        <button type="button" id="composer-submit" class="btn btn-primary btn-sm">
+          نشر
+        </button>
       </div>
     </div>
 
     <div class="tabs">
-      <button class="tab-btn active" id="feed-tab-following">أتابعهم</button>
-      <button class="tab-btn" id="feed-tab-explore">استكشف</button>
+      <button class="tab-btn active" id="feed-tab-explore">استكشف</button>
+      <button class="tab-btn" id="feed-tab-following">أتابعهم</button>
     </div>
 
     <div id="feed-list"></div>
@@ -57,8 +62,17 @@
     <div class="mood-modal-box">
       <div class="mood-modal-header">
         <strong>وش مزاجك اليوم؟</strong>
-        <button type="button" id="mood-modal-close" class="icon-btn-plain" style="background:none;border:none;font-size:20px;">✕</button>
+
+        <button
+          type="button"
+          id="mood-modal-close"
+          class="icon-btn-plain"
+          style="background:none;border:none;font-size:20px;"
+        >
+          ✕
+        </button>
       </div>
+
       <div id="mood-grid"></div>
     </div>
   </div>
