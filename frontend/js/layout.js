@@ -26,13 +26,14 @@ const Layout = (() => {
     const items = [
       { key: "index", href: "index.html", icon: "🏠", label: "الرئيسية" },
       { key: "search", href: "search.html", icon: "🔍", label: "بحث" },
+      { key: "messages", href: "messages.html", icon: "💬", label: "الدردشة", badgeId: "messages-badge" },
       { key: "notifications", href: "notifications.html", icon: "🔔", label: "الإشعارات" },
       { key: "profile", href: user ? `profile.html?u=${encodeURIComponent(user.username)}` : "login.html", icon: "👤", label: "حسابي" },
     ];
     nav.innerHTML = items
       .map(
         (i) => `<a href="${i.href}" class="${i.key === activePage ? "active" : ""}">
-          <span class="nav-icon">${i.icon}</span><span>${i.label}</span>
+          <span class="nav-icon">${i.icon}${i.badgeId ? `<span class="badge-dot" id="${i.badgeId}"></span>` : ""}</span><span>${i.label}</span>
         </a>`
       )
       .join("");
@@ -49,12 +50,24 @@ const Layout = (() => {
     }
   }
 
+  async function refreshMessagesBadge() {
+    if (!Auth.isLoggedIn()) return;
+    try {
+      const res = await Api.get("/api/messages/unread-count");
+      const badge = document.getElementById("messages-badge");
+      if (badge) badge.classList.toggle("show", res.unread_count > 0);
+    } catch (e) {
+      // تجاهل بصمت؛ ليست عملية حرجة
+    }
+  }
+
   function init(activePage) {
     Auth.requireAuth();
     renderHeader(activePage);
     renderBottomNav(activePage);
     refreshNotifBadge();
+    refreshMessagesBadge();
   }
 
-  return { init, refreshNotifBadge };
+  return { init, refreshNotifBadge, refreshMessagesBadge };
 })();
