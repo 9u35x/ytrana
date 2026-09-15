@@ -1,6 +1,6 @@
 // منطق الصفحة الرئيسية (Feed)
 let selectedImageFile = null;
-let currentFeedMode = "explore"; // explore | feed
+let currentFeedMode = "explore"; // feed | explore
 
 document.addEventListener("DOMContentLoaded", () => {
   Layout.init("index");
@@ -125,4 +125,4 @@ async function loadFeed() {
       <p>${escapeHtml(err.message)}</p>
     </div>`;
   }
-      }
+}
