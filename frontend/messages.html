@@ -8,6 +8,10 @@
   <link rel="stylesheet" href="css/style.css">
 
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     .messages-layout {
       display: flex;
       flex-direction: column;
@@ -59,39 +63,57 @@
       padding: 0 6px;
     }
 
+    /* البحث */
     #user-search-results {
       margin-bottom: 8px;
       background: var(--y-bg);
       border-radius: 12px;
+      overflow: hidden;
     }
 
     .search-user-item:hover {
       background: var(--y-card-alt, #f5f5f5);
     }
 
+    /* نافذة المحادثة */
     #chat-panel {
       position: fixed;
       inset: 0;
+      width: 100%;
+      height: 100%;
       background: var(--y-bg);
-      z-index: 50;
+      z-index: 9999;
+
       display: none;
       flex-direction: column;
     }
 
     #chat-panel.show {
-      display: flex;
+      display: flex !important;
     }
 
+    /* رأس المحادثة */
     .chat-header {
+      flex-shrink: 0;
       display: flex;
       align-items: center;
       gap: 12px;
-      padding: 12px 16px;
+      min-height: 60px;
+      padding: 10px 16px;
       border-bottom: 1px solid var(--y-border);
+      background: var(--y-bg);
     }
 
+    #chat-with-name {
+      font-weight: 600;
+      font-size: 15px;
+      flex: 1;
+    }
+
+    /* الرسائل */
     #chat-messages {
       flex: 1;
+      min-height: 0;
       overflow-y: auto;
       padding: 16px;
       display: flex;
@@ -101,6 +123,7 @@
 
     .chat-bubble-row {
       display: flex;
+      width: 100%;
     }
 
     .chat-bubble-row.mine {
@@ -122,22 +145,73 @@
       color: #fff;
     }
 
+    /* خانة كتابة الرسالة */
     .chat-form {
+      flex-shrink: 0;
+      width: 100%;
       display: flex;
+      align-items: center;
       gap: 8px;
-      padding: 10px 16px;
+      padding: 10px 12px;
+      padding-bottom: calc(10px + env(safe-area-inset-bottom));
       border-top: 1px solid var(--y-border);
+      background: var(--y-bg);
     }
 
     .chat-form input {
       flex: 1;
+      min-width: 0;
+      height: 44px;
+      padding: 0 14px;
+      border: 1px solid var(--y-border);
+      border-radius: 22px;
+      background: var(--y-card-alt, #f5f5f5);
+      color: var(--y-text);
+      outline: none;
+      font-size: 14px;
     }
 
+    .chat-form input:focus {
+      border-color: var(--y-primary);
+    }
+
+    .chat-form button {
+      flex-shrink: 0;
+      height: 44px;
+      padding: 0 16px;
+      border-radius: 22px;
+      cursor: pointer;
+    }
+
+    /* زر الرجوع */
     .icon-btn-plain {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       background: none;
       border: none;
-      font-size: 20px;
+      font-size: 22px;
       cursor: pointer;
+      color: var(--y-text);
+      flex-shrink: 0;
+    }
+
+    /* الموبايل */
+    @media (max-width: 600px) {
+      .chat-bubble {
+        max-width: 82%;
+      }
+
+      .chat-form {
+        padding-left: 8px;
+        padding-right: 8px;
+      }
+
+      .chat-form button {
+        padding: 0 13px;
+      }
     }
   </style>
 </head>
@@ -147,13 +221,10 @@
   <header class="y-header" id="y-header"></header>
 
   <main class="container messages-layout">
-
     <div id="conversations-list"></div>
-
   </main>
 
   <!-- نافذة المحادثة -->
-
   <div id="chat-panel">
 
     <div class="chat-header">
@@ -162,24 +233,27 @@
         class="icon-btn-plain"
         id="back-to-list"
         type="button"
+        aria-label="رجوع"
       >
         →
       </button>
 
       <div id="chat-with-avatar"></div>
 
-      <div
-        id="chat-with-name"
-        style="font-weight:600;"
-      ></div>
+      <div id="chat-with-name">
+        المحادثة
+      </div>
 
     </div>
 
+    <!-- الرسائل -->
     <div id="chat-messages"></div>
 
+    <!-- كتابة الرسالة -->
     <form
       class="chat-form"
       id="chat-form"
+      autocomplete="off"
     >
 
       <input
@@ -188,6 +262,7 @@
         placeholder="اكتب رسالة..."
         maxlength="2000"
         autocomplete="off"
+        enterkeyhint="send"
       >
 
       <button
