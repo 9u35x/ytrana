@@ -13,7 +13,7 @@ from config import settings
 from database.db import Base, engine
 from models import models  # noqa: F401  (يضمن تسجيل كل النماذج قبل create_all)
 
-from routes import auth, users, posts, comments, notifications, reports, admin
+from routes import auth, users, posts, comments, notifications, reports, admin, messages, moods
 
 # إنشاء الجداول إن لم تكن موجودة (لبيئة SQLite / MVP الحالية)
 Base.metadata.create_all(bind=engine)
@@ -56,6 +56,8 @@ app.include_router(comments.router)
 app.include_router(notifications.router)
 app.include_router(reports.router)
 app.include_router(admin.router)
+app.include_router(messages.router)
+app.include_router(moods.router)
 
 
 @app.get("/api/health")
