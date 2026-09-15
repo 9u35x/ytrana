@@ -1,20 +1,43 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
   <title>الدردشة — Ytrana</title>
 
   <link rel="stylesheet" href="css/style.css">
 
   <style>
+
+    /* =====================================================
+       الأساس
+    ===================================================== */
+
     * {
       box-sizing: border-box;
     }
 
+    html,
     body {
+      width: 100%;
+      min-height: 100%;
       margin: 0;
+      padding: 0;
     }
+
+    body {
+      overflow-x: hidden;
+    }
+
+
+    /* =====================================================
+       قائمة المحادثات
+    ===================================================== */
 
     .messages-layout {
       min-height: calc(100vh - 120px);
@@ -22,12 +45,24 @@
     }
 
     .conv-item {
+      width: 100%;
+
       display: flex;
       align-items: center;
+
       gap: 12px;
-      padding: 12px 16px;
+
+      padding: 13px 16px;
+
       border-bottom: 1px solid var(--y-border);
+
       cursor: pointer;
+
+      transition: background 0.15s ease;
+    }
+
+    .conv-item:hover {
+      background: var(--y-card);
     }
 
     .conv-item-info {
@@ -36,236 +71,544 @@
     }
 
     .conv-item-name {
-      font-weight: 600;
+      color: var(--y-text);
+
       font-size: 14px;
+      font-weight: 600;
     }
 
     .conv-item-last {
-      font-size: 13px;
+      margin-top: 3px;
+
       color: var(--y-text-secondary);
+
+      font-size: 13px;
+
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
     .conv-unread-badge {
-      background: var(--y-primary);
-      color: white;
-      border-radius: 999px;
-      min-width: 20px;
-      height: 20px;
+      min-width: 21px;
+      height: 21px;
+
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 11px;
+
       padding: 0 6px;
+
+      border-radius: 999px;
+
+      background: var(--y-primary);
+
+      color: #fff;
+
+      font-size: 11px;
+      font-weight: 600;
     }
 
-    /* شاشة المحادثة */
+
+    /* =====================================================
+       البحث
+    ===================================================== */
+
+    #messages-search-header {
+      width: 100%;
+    }
+
+    #user-search-results {
+      width: 100%;
+
+      margin-bottom: 8px;
+
+      background: var(--y-bg);
+
+      border: 1px solid var(--y-border);
+
+      border-radius: 12px;
+
+      overflow: hidden;
+    }
+
+    .search-user-item {
+      width: 100%;
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 12px;
+
+      padding: 12px;
+
+      border-bottom: 1px solid var(--y-border);
+
+      background: var(--y-bg);
+
+      color: var(--y-text);
+
+      cursor: pointer;
+    }
+
+    .search-user-item:last-child {
+      border-bottom: 0;
+    }
+
+    .search-user-item:hover {
+      background: var(--y-card);
+    }
+
+
+    /* =====================================================
+       شاشة المحادثة
+    ===================================================== */
+
     #chat-panel {
+
       position: fixed;
-      inset: 0;
+
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+
       width: 100%;
       height: 100%;
-      background: var(--y-bg);
-      z-index: 99999;
 
       display: none;
+
       flex-direction: column;
+
+      background: var(--y-bg);
+
+      color: var(--y-text);
+
+      z-index: 99999;
+
+      overflow: hidden;
     }
 
     #chat-panel.show {
       display: flex !important;
     }
 
-    /* رأس المحادثة */
+
+    /* =====================================================
+       رأس المحادثة
+    ===================================================== */
+
     .chat-header {
+
       width: 100%;
-      height: 60px;
-      min-height: 60px;
+
+      height: 62px;
+      min-height: 62px;
 
       display: flex;
+
       align-items: center;
+
       gap: 10px;
 
       padding: 8px 12px;
 
+      background: var(--y-bg);
+
       border-bottom: 1px solid var(--y-border);
 
-      background: var(--y-bg);
+      flex-shrink: 0;
+    }
+
+    #chat-with-avatar {
+      display: flex;
+
+      align-items: center;
+      justify-content: center;
+
+      flex-shrink: 0;
     }
 
     #chat-with-name {
-      font-weight: 600;
+
       flex: 1;
+
+      min-width: 0;
+
+      color: var(--y-text);
+
+      font-size: 15px;
+
+      font-weight: 600;
+
+      white-space: nowrap;
+
+      overflow: hidden;
+
+      text-overflow: ellipsis;
     }
 
     .icon-btn-plain {
+
       width: 40px;
       height: 40px;
 
+      display: flex;
+
+      align-items: center;
+      justify-content: center;
+
+      padding: 0;
+
       border: 0;
+
+      border-radius: 50%;
+
       background: transparent;
 
-      font-size: 24px;
-      cursor: pointer;
-
       color: var(--y-text);
+
+      font-size: 24px;
+
+      cursor: pointer;
     }
 
-    /* منطقة الرسائل */
+    .icon-btn-plain:hover {
+      background: var(--y-card);
+    }
+
+
+    /* =====================================================
+       منطقة الرسائل
+    ===================================================== */
+
     #chat-messages {
+
       flex: 1;
+
       width: 100%;
+
+      min-height: 0;
 
       overflow-y: auto;
 
       padding: 16px;
 
       display: flex;
+
       flex-direction: column;
+
       gap: 8px;
 
-      min-height: 0;
+      background: var(--y-bg);
     }
 
+
+    /* صف الرسالة */
+
     .chat-bubble-row {
+
       width: 100%;
+
       display: flex;
+
+      align-items: flex-end;
+
+      justify-content: flex-start;
     }
 
     .chat-bubble-row.mine {
       justify-content: flex-end;
     }
 
+
+    /* =====================================================
+       الرسائل الواردة
+    ===================================================== */
+
     .chat-bubble {
-      max-width: 75%;
+
+      max-width: min(75%, 500px);
 
       padding: 10px 14px;
 
-      border-radius: 16px;
+      border-radius: 17px;
 
-      background: var(--y-card-alt, #eeeeee);
+      background: var(--y-card);
+
+      color: var(--y-text);
+
+      border: 1px solid var(--y-border);
 
       font-size: 14px;
-      line-height: 1.5;
+
+      line-height: 1.55;
 
       word-break: break-word;
+
+      overflow-wrap: anywhere;
+
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
     }
+
+
+    /* =====================================================
+       رسائلي
+    ===================================================== */
 
     .chat-bubble-row.mine .chat-bubble {
-      background: var(--y-primary);
-      color: white;
+
+      background: var(--y-primary) !important;
+
+      color: #fff !important;
+
+      border-color: var(--y-primary) !important;
+
+      border-radius: 17px 17px 4px 17px;
     }
 
-    /* =========================
-       خانة كتابة الرسالة
-    ========================= */
 
-    .chat-form {
-      position: relative;
+    /* =====================================================
+       الرسائل الواردة
+    ===================================================== */
+
+    .chat-bubble-row:not(.mine) .chat-bubble {
+
+      background: var(--y-card) !important;
+
+      color: var(--y-text) !important;
+
+      border-color: var(--y-border) !important;
+
+      border-radius: 17px 17px 17px 4px;
+    }
+
+
+    /* =====================================================
+       خانة كتابة الرسالة
+    ===================================================== */
+
+    #chat-form {
 
       width: 100%;
 
-      min-height: 64px;
+      min-height: 70px;
 
       display: flex !important;
+
       align-items: center;
 
       gap: 8px;
 
       padding: 10px 12px;
 
+      background: var(--y-bg) !important;
+
       border-top: 1px solid var(--y-border);
 
-      background: var(--y-bg);
-
       flex-shrink: 0;
+
+      position: relative;
 
       z-index: 100000;
     }
 
+
+    /* =====================================================
+       حقل الكتابة
+    ===================================================== */
+
     #chat-input {
+
       display: block !important;
+
+      visibility: visible !important;
+
+      opacity: 1 !important;
 
       flex: 1;
 
       width: 100%;
 
-      height: 44px;
+      min-width: 0;
 
-      min-height: 44px;
+      height: 46px;
 
-      padding: 0 15px;
+      padding: 0 16px;
 
-      border-radius: 22px;
+      border: 1px solid var(--y-border) !important;
 
-      border: 1px solid var(--y-border);
-
-      background: var(--y-card-alt, #f5f5f5);
-
-      color: var(--y-text);
+      border-radius: 23px;
 
       outline: none;
 
+      background: var(--y-card) !important;
+
+      color: var(--y-text) !important;
+
+      font-family: inherit;
+
       font-size: 14px;
+
+      transition:
+        border-color 0.15s ease,
+        background 0.15s ease;
+    }
+
+    #chat-input::placeholder {
+
+      color: var(--y-text-secondary);
+
+      opacity: 1;
     }
 
     #chat-input:focus {
-      border-color: var(--y-primary);
+
+      border-color: var(--y-primary) !important;
+
+      background: var(--y-card) !important;
     }
 
-    .chat-form button {
+
+    /* =====================================================
+       زر الإرسال
+    ===================================================== */
+
+    #chat-form button {
+
       display: flex !important;
 
       align-items: center;
       justify-content: center;
 
-      height: 44px;
+      flex-shrink: 0;
+
+      height: 46px;
 
       min-width: 70px;
 
-      border-radius: 22px;
+      padding: 0 15px;
 
-      flex-shrink: 0;
+      border: 0;
+
+      border-radius: 23px;
+
+      background: var(--y-primary);
+
+      color: #fff;
+
+      font-family: inherit;
+
+      font-size: 14px;
+
+      font-weight: 600;
 
       cursor: pointer;
+
+      transition: opacity 0.15s ease;
     }
 
-    /* البحث */
-    #messages-search-header {
+    #chat-form button:hover {
+      opacity: 0.9;
+    }
+
+    #chat-form button:active {
+      transform: scale(0.98);
+    }
+
+
+    /* =====================================================
+       حالة عدم وجود رسائل
+    ===================================================== */
+
+    #chat-messages .empty-state {
+
       width: 100%;
+
+      margin: auto;
+
+      text-align: center;
+
+      color: var(--y-text-secondary);
     }
 
-    #user-search-results {
-      margin-bottom: 8px;
-      border-radius: 12px;
-      overflow: hidden;
+
+    /* =====================================================
+       شريط التمرير
+    ===================================================== */
+
+    #chat-messages::-webkit-scrollbar {
+      width: 5px;
     }
+
+    #chat-messages::-webkit-scrollbar-thumb {
+
+      background: var(--y-border);
+
+      border-radius: 10px;
+    }
+
+
+    /* =====================================================
+       الهاتف
+    ===================================================== */
 
     @media (max-width: 600px) {
 
-      .chat-bubble {
-        max-width: 85%;
+      .chat-header {
+        height: 58px;
+        min-height: 58px;
+
+        padding: 7px 10px;
       }
 
-      .chat-form {
+      #chat-messages {
+        padding: 12px;
+      }
+
+      .chat-bubble {
+        max-width: 85%;
+
+        font-size: 14px;
+
+        padding: 9px 13px;
+      }
+
+      #chat-form {
+
+        min-height: 64px;
+
         padding: 8px;
       }
 
       #chat-input {
+
+        height: 44px;
+
         font-size: 14px;
       }
 
-      .chat-form button {
+      #chat-form button {
+
+        height: 44px;
+
         min-width: 62px;
-        padding: 0 10px;
+
+        padding: 0 12px;
       }
     }
+
   </style>
 </head>
 
+
 <body class="dir-rtl">
+
+
+  <!-- =====================================================
+       الهيدر الرئيسي
+  ====================================================== -->
 
   <header
     class="y-header"
@@ -273,32 +616,41 @@
   </header>
 
 
-  <main
-    class="container messages-layout">
+  <!-- =====================================================
+       قائمة المحادثات
+  ====================================================== -->
+
+  <main class="container messages-layout">
 
     <div id="conversations-list"></div>
 
   </main>
 
 
-  <!-- =========================
+  <!-- =====================================================
        نافذة المحادثة
-  ========================== -->
+  ====================================================== -->
 
   <div id="chat-panel">
 
-    <!-- الرأس -->
+
+    <!-- رأس المحادثة -->
 
     <div class="chat-header">
 
       <button
         id="back-to-list"
         class="icon-btn-plain"
-        type="button">
-        →
+        type="button"
+        aria-label="رجوع">
+
+        ←
+
       </button>
 
+
       <div id="chat-with-avatar"></div>
+
 
       <div id="chat-with-name">
         المحادثة
@@ -307,25 +659,40 @@
     </div>
 
 
-    <!-- الرسائل -->
+    <!-- ===================================================
+         الرسائل
+    ==================================================== -->
 
-    <div id="chat-messages"></div>
+    <div id="chat-messages">
+
+      <div class="empty-state">
+
+        <p>
+          ابدأ المحادثة 👋
+        </p>
+
+      </div>
+
+    </div>
 
 
-    <!-- =========================
-         خانة الكتابة
-    ========================== -->
+    <!-- ===================================================
+         كتابة الرسالة
+    ==================================================== -->
 
     <form
       id="chat-form"
-      class="chat-form">
+      autocomplete="off">
+
 
       <input
         id="chat-input"
         type="text"
-        placeholder="اكتب رسالة..."
         maxlength="2000"
-        autocomplete="off">
+        placeholder="اكتب رسالة..."
+        autocomplete="off"
+        spellcheck="true">
+
 
       <button
         type="submit"
@@ -335,10 +702,15 @@
 
       </button>
 
+
     </form>
 
   </div>
 
+
+  <!-- =====================================================
+       التنقل السفلي
+  ====================================================== -->
 
   <nav
     class="y-bottom-nav"
@@ -346,14 +718,27 @@
   </nav>
 
 
+  <!-- =====================================================
+       ملفات JavaScript
+  ====================================================== -->
+
   <script src="js/config.js"></script>
+
   <script src="js/api.js"></script>
+
   <script src="js/auth.js"></script>
+
   <script src="js/theme.js"></script>
+
   <script src="js/toast.js"></script>
+
   <script src="js/avatar.js"></script>
+
   <script src="js/layout.js"></script>
+
   <script src="js/messages.js"></script>
 
+
 </body>
+
 </html>
