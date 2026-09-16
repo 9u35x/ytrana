@@ -32,6 +32,8 @@ class User(Base):
     is_active = Column(Boolean, default=True, nullable=False)     # حساب مفعّل
     is_banned = Column(Boolean, default=False, nullable=False)    # محظور من الإدارة
     is_admin = Column(Boolean, default=False, nullable=False)
+    failed_login_attempts = Column(Integer, default=0, nullable=False)
+    locked_until = Column(DateTime(timezone=True), nullable=True)
 
     created_at = Column(DateTime(timezone=True), default=utcnow, nullable=False)
     updated_at = Column(DateTime(timezone=True), default=utcnow, onupdate=utcnow, nullable=False)
