@@ -6,7 +6,7 @@
 
   <meta
     name="viewport"
-    content="width=device-width, initial-scale=1.0, maximum-scale=1">
+    content="width=device-width, initial-scale=1.0">
 
   <title>الدردشة — Ytrana</title>
 
@@ -349,7 +349,18 @@
 
       overflow-wrap: anywhere;
 
+      white-space: pre-wrap;
+
       box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    .chat-message-meta {
+      display: flex;
+      justify-content: flex-start;
+      gap: 8px;
+      margin-top: 4px;
+      font-size: 10px;
+      opacity: 0.72;
     }
 
 
@@ -599,7 +610,8 @@
       }
     }
 
-  </style>
+  .mood-panel{padding:14px 16px;margin-bottom:14px;border-radius:20px;background:linear-gradient(135deg,var(--y-card,#fff),#faf9ff)}.mood-top{display:flex;align-items:center;justify-content:space-between;gap:12px}.mood-heading{min-width:0}.mood-panel h2{font-size:1.05rem;margin:0 0 4px}.mood-summary{margin:0;color:var(--y-text-secondary);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mood-toggle{flex:0 0 auto;border:0;border-radius:12px;padding:9px 13px;background:#efecff;color:#5b45d2;font:inherit;font-size:12px;font-weight:800;cursor:pointer}.mood-feed-section{margin-top:12px}.mood-feed-heading{display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--y-text-secondary)}.mood-feed{display:flex;gap:8px;overflow-x:auto;padding:9px 1px 2px;scrollbar-width:thin}.mood-chip{display:block;flex:0 0 176px;max-width:176px;padding:10px 12px;border:1px solid var(--y-border);border-radius:15px;background:var(--y-bg,#f7f6fb);white-space:normal;font-size:12px}.mood-chip strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--y-text)}.mood-chip small{display:block;margin-top:3px;color:var(--y-text-secondary);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.mood-panel form:not([hidden]){display:grid;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid var(--y-border)}.mood-panel form[hidden]{display:none!important}.mood-panel .story-mood-row{margin:0}.mood-form-actions{display:flex;align-items:center;justify-content:space-between;gap:8px}.mood-form-actions small{color:var(--y-text-secondary)}.mood-panel .form-control{margin:0;border-radius:13px}@media(max-width:480px){.mood-panel{padding:12px}.mood-chip{flex-basis:156px;max-width:156px}.mood-toggle{padding:8px 10px}}</style>
+  <link rel="stylesheet" href="css/report-dialog.css">
 </head>
 
 
@@ -621,7 +633,7 @@
   ====================================================== -->
 
   <main class="container messages-layout">
-
+    <section class="card mood-panel" aria-labelledby="mood-panel-title"><div class="mood-top"><div class="mood-heading"><h2 id="mood-panel-title">ملاحظات الحالة</h2><p id="messages-mood-summary" class="mood-summary">تظهر ملاحظتك لمتابعيك لمدة 24 ساعة</p></div><button type="button" id="messages-mood-toggle" class="mood-toggle" aria-expanded="false">أضف حالتك</button></div><div class="mood-feed-section"><div class="mood-feed-heading"><strong>من تتابعهم</strong><span id="messages-mood-count">0</span></div><div id="messages-mood-feed" class="mood-feed"></div></div><form id="messages-mood-form" hidden><div class="story-mood-row" id="messages-mood-options" role="group" aria-label="اختر مزاجك"></div><label class="form-label" for="messages-mood-note">ملاحظتي لمتابعيني</label><input class="form-control" id="messages-mood-note" maxlength="120" placeholder="اكتب ملاحظة قصيرة"><div class="mood-form-actions"><small id="messages-mood-counter">0/120</small><button class="btn btn-primary btn-sm" type="submit">حفظ الحالة</button></div></form></section>
     <div id="conversations-list"></div>
 
   </main>
@@ -734,6 +746,7 @@
 
   <script src="js/avatar.js"></script>
 
+  <script src="js/post-card.js"></script>
   <script src="js/layout.js"></script>
 
   <script src="js/messages.js"></script>

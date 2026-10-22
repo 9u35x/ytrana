@@ -20,7 +20,8 @@ def list_notifications(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    limit = min(limit, 100)
+    skip = max(0, min(skip, 1_000_000))
+    limit = max(1, min(limit, 100))
     notifications = (
         db.query(Notification)
         .options(joinedload(Notification.actor))

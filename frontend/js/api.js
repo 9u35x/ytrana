@@ -59,6 +59,7 @@ const Api = (() => {
     get: (path) => request(path),
     post: (path, body, isForm = false) => request(path, { method: "POST", body, isForm }),
     put: (path, body, isForm = false) => request(path, { method: "PUT", body, isForm }),
+    patch: (path, body, isForm = false) => request(path, { method: "PATCH", body, isForm }),
     del: (path, body = null) => request(path, { method: "DELETE", body }),
   };
 })();

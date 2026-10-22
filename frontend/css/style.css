@@ -1,3 +1,4 @@
+@import url("verification.css");
 /* ============================================
    Ytrana Design System
    ============================================ */
@@ -483,3 +484,43 @@ textarea.form-control { resize: vertical; min-height: 80px; }
 @media (min-width: 640px) {
   .container { padding: 0 var(--y-space-4); }
 }
+
+
+/* ---------- Stories and Reels ---------- */
+.media-page { max-width: 720px; padding-top: 18px; }
+.media-intro { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
+.media-intro h1 { font-size:23px; color:var(--y-text); }
+.media-intro p { color:var(--y-text-secondary); font-size:13px; margin-top:4px; }
+.media-mark { display:grid; place-items:center; width:44px; height:44px; border-radius:15px; color:#fff; font-weight:900; font-size:23px; background:linear-gradient(135deg,var(--y-primary),#3216c7); }
+.media-tabs { display:flex; gap:8px; margin-bottom:12px; }
+.media-tabs button { flex:1; border:1px solid var(--y-border); border-radius:999px; padding:10px; color:var(--y-text-secondary); background:var(--y-surface); font-weight:700; }
+.media-tabs button.active { color:#fff; border-color:var(--y-primary); background:var(--y-primary); }
+.media-panel[hidden] { display:none; }
+.media-composer { padding:16px; margin-bottom:16px; display:grid; gap:10px; }
+.media-composer h2,.media-section-title h2 { font-size:17px; }
+.media-composer .form-control[type=file] { padding:8px; }
+.media-section-title { display:flex; justify-content:space-between; align-items:center; margin:18px 2px 8px; }
+.stories-list,.reels-list { display:grid; gap:10px; }
+.story-row { display:flex; align-items:center; gap:10px; padding:12px; }
+.story-open { display:flex; align-items:center; gap:10px; flex:1; min-width:0; border:0; background:none; color:var(--y-text); text-align:right; }
+.story-info { display:flex; flex-direction:column; gap:3px; flex:1; min-width:0; }
+.story-info strong { font-size:13px; }
+.story-info span { color:var(--y-text-secondary); font-size:12px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.story-info small { color:var(--y-primary); font-size:10px; }
+.story-thumb { width:48px; height:58px; object-fit:cover; border-radius:9px; }
+.media-empty { padding:22px; text-align:center; color:var(--y-text-secondary); }
+.story-viewer { width:min(92vw,520px); max-height:88vh; border:1px solid var(--y-border); border-radius:20px; background:var(--y-surface); color:var(--y-text); padding:16px; }
+.story-viewer::backdrop { background:#111a; backdrop-filter:blur(3px); }
+.viewer-head { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+#viewer-author { display:flex; align-items:center; gap:8px; font-size:13px; }
+.viewer-content { display:grid; place-items:center; min-height:220px; max-height:65vh; margin:12px 0; border-radius:14px; overflow:hidden; background:#17151e; }
+.viewer-content img { width:100%; max-height:65vh; object-fit:contain; }
+.story-text-card { color:#fff; font-size:23px; font-weight:800; text-align:center; padding:28px; line-height:1.7; }
+.viewer-caption { text-align:center; margin-bottom:10px; white-space:pre-wrap; }
+.reel-card { width:min(100%,420px); margin:0 auto 18px; overflow:hidden; border-radius:18px; background:#111; color:#fff; box-shadow:var(--y-shadow-md); }
+.reel-card video { display:block; width:100%; max-height:76vh; aspect-ratio:9/16; object-fit:contain; background:#070707; }
+.reel-meta { display:flex; align-items:center; gap:8px; padding:10px; }
+.reel-by { display:flex; flex-direction:column; gap:3px; flex:1; min-width:0; font-size:12px; }
+.reel-by span { color:#ddd; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.reel-views { color:#ccc; font-size:10px; white-space:nowrap; }
+@media (max-width:480px) { .media-page { padding-left:10px; padding-right:10px; } .story-row { padding:9px; } .y-bottom-nav a { padding-left:8px; padding-right:8px; } }

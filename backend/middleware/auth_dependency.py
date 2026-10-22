@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 from database.db import get_db
 from models.models import User
 from utils.security import decode_access_token
+from services.moderation import is_platform_admin
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login", auto_error=False)
 
@@ -28,8 +29,11 @@ def get_current_user(
     if payload is None:
         raise credentials_exception
 
-    user_id = payload.get("sub")
-    if user_id is None:
+    try:
+        user_id = int(payload.get("sub"))
+    except (TypeError, ValueError):
+        raise credentials_exception
+    if user_id < 1:
         raise credentials_exception
 
     user = db.query(User).filter(User.id == int(user_id)).first()
@@ -41,6 +45,8 @@ def get_current_user(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="تم حظر هذا الحساب من قبل الإدارة",
         )
+    if user.is_frozen:
+        raise HTTPException(status_code=403, detail="هذا الحساب مجمّد مؤقتًا من قبل الإدارة")
     if not user.is_active:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
@@ -60,17 +66,20 @@ def get_current_user_optional(
     payload = decode_access_token(token)
     if payload is None:
         return None
-    user_id = payload.get("sub")
-    if user_id is None:
+    try:
+        user_id = int(payload.get("sub"))
+    except (TypeError, ValueError):
+        return None
+    if user_id < 1:
         return None
     user = db.query(User).filter(User.id == int(user_id)).first()
-    if user and (user.is_banned or not user.is_active):
+    if user and (user.is_banned or user.is_frozen or not user.is_active):
         return None
     return user
 
 
 def get_current_admin(current_user: User = Depends(get_current_user)) -> User:
-    if not current_user.is_admin:
+    if not is_platform_admin(current_user):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="هذه الصلاحية مخصصة للإدارة فقط",

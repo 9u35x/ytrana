@@ -1,18 +1,29 @@
-// توليد صورة رمزية افتراضية (حرف أول من الاسم) عندما لا توجد صورة شخصية
-function renderAvatar(user, sizeClass = "avatar-md") {
-  if (user && user.avatar_url) {
-    const src = user.avatar_url.startsWith("http")
-      ? user.avatar_url
-      : `${YTRANA_CONFIG.API_BASE}${user.avatar_url}`;
-    return `<img src="${src}" class="avatar ${sizeClass}" alt="${escapeHtml(user.username || "")}">`;
+// توليد صورة رمزية آمنة، أو الحرف الأول من الاسم عند غياب الصورة.
+function uploadedImageUrl(rawUrl) {
+  if (typeof rawUrl !== "string" || !rawUrl) return null;
+  try {
+    const apiBase = new URL(YTRANA_CONFIG.API_BASE, window.location.href);
+    const imageUrl = new URL(rawUrl, apiBase);
+    if (imageUrl.origin !== apiBase.origin || !imageUrl.pathname.startsWith("/uploads/")) return null;
+    return imageUrl.href;
+  } catch (_error) {
+    return null;
   }
-  const letter = user && user.full_name ? user.full_name.trim()[0].toUpperCase() : "Y";
-  return `<div class="avatar ${sizeClass} avatar-placeholder">${letter}</div>`;
 }
 
-function escapeHtml(str) {
-  if (!str) return "";
-  return str
+function renderAvatar(user, sizeClass = "avatar-md") {
+  const src = user && uploadedImageUrl(user.avatar_url);
+  if (src) {
+    return `<img src="${escapeHtml(src)}" class="avatar ${sizeClass}" alt="${escapeHtml(user.username || "")}" loading="lazy" decoding="async">`;
+  }
+  const name = user && typeof user.full_name === "string" ? user.full_name.trim() : "";
+  const letter = name ? Array.from(name)[0].toLocaleUpperCase() : "Y";
+  return `<div class="avatar ${sizeClass} avatar-placeholder" aria-hidden="true">${escapeHtml(letter)}</div>`;
+}
+
+function escapeHtml(value) {
+  if (value === null || value === undefined) return "";
+  return String(value)
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
@@ -23,6 +34,7 @@ function escapeHtml(str) {
 function timeAgo(dateString) {
   const date = new Date(dateString);
   const seconds = Math.floor((new Date() - date) / 1000);
+  if (!Number.isFinite(seconds) || seconds < 0) return "الآن";
   const intervals = [
     { label: "سنة", secs: 31536000 },
     { label: "شهر", secs: 2592000 },
@@ -30,9 +42,9 @@ function timeAgo(dateString) {
     { label: "ساعة", secs: 3600 },
     { label: "دقيقة", secs: 60 },
   ];
-  for (const i of intervals) {
-    const count = Math.floor(seconds / i.secs);
-    if (count >= 1) return `منذ ${count} ${i.label}${count > 1 && count < 11 ? (i.label === "شهر" ? "أشهر" : i.label + "ات") : ""}`;
+  for (const interval of intervals) {
+    const count = Math.floor(seconds / interval.secs);
+    if (count >= 1) return `منذ ${count} ${interval.label}${count > 1 && count < 11 ? (interval.label === "شهر" ? "أشهر" : interval.label + "ات") : ""}`;
   }
   return "الآن";
 }

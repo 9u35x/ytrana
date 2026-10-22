@@ -1,5 +1,6 @@
 // منطق الصفحة الرئيسية (Feed)
 let selectedImageFile = null;
+let selectedMediaKind = "image";
 let currentFeedMode = "explore"; // feed | explore
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -9,6 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const composerImageInput = document.getElementById("composer-image-input");
   const composerPreview = document.getElementById("composer-preview");
   const composerPreviewImg = document.getElementById("composer-preview-img");
+  const composerPreviewVideo = document.getElementById("composer-preview-video");
   const composerSubmit = document.getElementById("composer-submit");
   const feedTabFollowing = document.getElementById("feed-tab-following");
   const feedTabExplore = document.getElementById("feed-tab-explore");
@@ -21,11 +23,15 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!file) return;
 
     selectedImageFile = file;
+    selectedMediaKind = file.type.startsWith("video/") ? "video" : "image";
 
     const reader = new FileReader();
 
     reader.onload = (e) => {
       composerPreviewImg.src = e.target.result;
+      composerPreviewImg.style.display = selectedMediaKind === "image" ? "block" : "none";
+      composerPreviewVideo.src = selectedMediaKind === "video" ? e.target.result : "";
+      composerPreviewVideo.style.display = selectedMediaKind === "video" ? "block" : "none";
       composerPreview.classList.add("show");
     };
 
@@ -42,7 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const text = composerText.value.trim();
 
     if (!text && !selectedImageFile) {
-      showToast("اكتب شيئًا أو أضف صورة أولًا", "error");
+      showToast("اكتب شيئًا أو أضف صورة أو فيديو أولًا", "error");
       return;
     }
 
@@ -56,15 +62,19 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       if (selectedImageFile) {
-        formData.append("image", selectedImageFile);
+        formData.append(selectedMediaKind, selectedImageFile);
       }
 
-      await Api.post("/api/posts", formData, true);
+      formData.append("mood_key", document.querySelector("input[name=\"composer-mood\"]:checked")?.value || "");
+      const hasNewMediaFields = selectedMediaKind === "video" || Boolean(formData.get("mood_key"));
+      await Api.post(hasNewMediaFields ? "/api/media/posts" : "/api/posts", formData, true);
 
       composerText.value = "";
       selectedImageFile = null;
+      selectedMediaKind = "image";
       composerImageInput.value = "";
       composerPreview.classList.remove("show");
+      composerPreviewVideo.style.display = "none";
 
       showToast("تم نشر المنشور", "success");
 
@@ -102,7 +112,14 @@ async function loadFeed() {
         ? "/api/posts/feed"
         : "/api/posts/explore";
 
-    const posts = await Api.get(path);
+    const basePosts = await Api.get(path);
+    let posts = basePosts;
+    if (basePosts.length) {
+      const ids = basePosts.map((post) => post.id).join(",");
+      const mediaPosts = await Api.get(`/api/media/posts?ids=${encodeURIComponent(ids)}`).catch(() => []);
+      const mediaById = new Map((mediaPosts || []).map((post) => [post.id, post]));
+      posts = basePosts.map((post) => ({ ...post, ...(mediaById.get(post.id) || {}) }));
+    }
 
     if (posts.length === 0) {
       list.innerHTML = `<div class="empty-state">

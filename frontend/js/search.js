@@ -5,11 +5,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const input = document.getElementById("search-input");
   const results = document.getElementById("search-results");
   let debounceTimer = null;
+  let requestVersion = 0;
 
   input.addEventListener("input", () => {
     clearTimeout(debounceTimer);
     const q = input.value.trim();
     if (!q) {
+      requestVersion += 1;
       results.innerHTML = `<div class="empty-state"><div class="icon">🔍</div><p>ابحث باسم المستخدم أو الاسم</p></div>`;
       return;
     }
@@ -17,9 +19,11 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   async function runSearch(q) {
+    const version = ++requestVersion;
     results.innerHTML = '<div class="loading-spinner"></div>';
     try {
       const users = await Api.get(`/api/users/search?q=${encodeURIComponent(q)}`);
+      if (version !== requestVersion) return;
       if (users.length === 0) {
         results.innerHTML = `<div class="empty-state"><p>لا توجد نتائج لـ "${escapeHtml(q)}"</p></div>`;
         return;
@@ -36,9 +40,8 @@ document.addEventListener("DOMContentLoaded", () => {
         )
         .join("");
     } catch (err) {
+      if (version !== requestVersion) return;
       results.innerHTML = `<div class="empty-state"><p>${escapeHtml(err.message)}</p></div>`;
     }
   }
-
-  results.innerHTML = `<div class="empty-state"><div class="icon">🔍</div><p>ابحث باسم المستخدم أو الاسم</p></div>`;
 });

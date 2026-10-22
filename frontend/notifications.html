@@ -2,9 +2,10 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>الإشعارات — Ytrana</title>
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/security.css">
 </head>
 <body class="dir-rtl">
   <header class="y-header" id="y-header"></header>
@@ -12,7 +13,7 @@
   <main class="container">
     <div style="display:flex; justify-content:space-between; align-items:center; padding: var(--y-space-4) 0;">
       <h2 style="font-size:17px;">الإشعارات</h2>
-      <button id="mark-all-read" class="link" style="background:none;border:none;">تحديد الكل كمقروء</button>
+      <button id="mark-all-read" type="button" class="link" aria-label="تحديد كل الإشعارات كمقروءة" style="background:none;border:none;">تحديد الكل كمقروء</button>
     </div>
     <div id="notif-list"></div>
   </main>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#6C5CE7">
+  <title>اللحظات — Ytrana</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/media.css">
+  <link rel="stylesheet" href="css/report-dialog.css">
+</head>
+<body class="dir-rtl">
+  <header class="y-header" id="y-header"></header>
+  <main class="container media-page">
+    <section class="media-intro"><div><h1>لحظات Ytrana</h1><p>قصص تختفي بعد 24 ساعة، ومقاطع قصيرة من مجتمعك.</p></div><span class="media-mark">Y</span></section>
+    <div class="media-tabs" role="tablist" aria-label="أقسام الوسائط">
+      <button type="button" class="active" data-media-tab="stories" role="tab" aria-selected="true">القصص</button>
+      <button type="button" data-media-tab="reels" role="tab" aria-selected="false">ريلز</button>
+    </div>
+
+    <section id="stories-panel" class="media-panel" role="tabpanel">
+      <form id="story-form" class="card media-composer">
+        <h2>أضف قصة</h2>
+        <textarea class="form-control" name="caption" id="story-caption" maxlength="500" placeholder="شارك لحظة قصيرة…"></textarea>
+        <label class="form-label" for="story-image">صورة أو فيديو (اختياري)</label>
+        <input class="form-control" type="file" id="story-image" name="media" accept="image/*,video/*">
+        <div class="story-mood-row"><label><input type="radio" name="mood_key" value="happy"> 😊 سعيد</label><label><input type="radio" name="mood_key" value="sad"> 😔 حزين</label></div><p class="form-hint">حتى 20MB. القصة تختفي تلقائيًا بعد 24 ساعة.</p>
+        <p id="story-error" class="form-error" role="alert"></p>
+        <button class="btn btn-primary" type="submit" id="story-submit">نشر القصة</button>
+      </form>
+      <div class="media-section-title"><h2>قصص من تتابعهم</h2><button class="btn btn-outline btn-sm" type="button" id="stories-refresh">تحديث</button></div>
+      <div id="stories-list" class="stories-list" aria-live="polite"></div>
+    </section>
+
+    <section id="reels-panel" class="media-panel" role="tabpanel" hidden>
+      <form id="reel-form" class="card media-composer">
+        <h2>شارك ريل</h2>
+        <label class="form-label" for="reel-video">مقطع MP4 أو MOV أو WebM</label>
+        <input class="form-control" type="file" id="reel-video" name="video" accept="video/mp4,video/quicktime,video/webm">
+        <textarea class="form-control" name="caption" id="reel-caption" maxlength="500" placeholder="اكتب وصفًا للمقطع…"></textarea>
+        <div class="story-mood-row"><label><input type="radio" name="mood_key" value="happy"> 😊 سعيد</label><label><input type="radio" name="mood_key" value="sad"> 😔 حزين</label></div><p class="form-hint">حتى 20MB و60 ثانية في هذه النسخة التجريبية.</p>
+        <p id="reel-error" class="form-error" role="alert"></p>
+        <button class="btn btn-primary" type="submit" id="reel-submit">رفع الريل</button>
+      </form>
+      <div class="media-section-title"><h2>مقاطع المجتمع</h2><button class="btn btn-outline btn-sm" type="button" id="reels-refresh">تحديث</button></div>
+      <div id="reels-list" class="reels-list" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <dialog id="story-viewer" class="story-viewer">
+    <div class="viewer-head"><span id="viewer-author"></span><button type="button" id="viewer-close" class="btn btn-ghost">إغلاق ×</button></div>
+    <div id="viewer-content" class="viewer-content"></div>
+    <p id="viewer-caption" class="viewer-caption"></p>
+    <form id="viewer-reply-form" class="story-reply"><input id="viewer-reply" maxlength="500" placeholder="اكتب ردًا على القصة…" aria-label="اكتب ردًا على القصة"><button type="submit" aria-label="إرسال الرد">إرسال</button></form>
+    <button id="viewer-delete" class="btn btn-danger btn-sm" type="button" hidden>حذف قصتي</button>
+  </dialog>
+
+  <nav class="y-bottom-nav" id="y-bottom-nav"></nav>
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/toast.js"></script>
+  <script src="js/avatar.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/post-card.js"></script>
+  <script src="js/media.js"></script>
+</body>
+</html>

@@ -4,6 +4,10 @@
 let currentChatUsername = null;
 let pollingInterval = null;
 let lastRenderedCount = 0;
+let lastRenderedSignature = "";
+let userSearchVersion = 0;
+let chatLoadSequence = 0;
+let sendingMessage = false;
 
 const POLL_MS = 3000;
 
@@ -12,6 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   setupMessagesHeader();
   loadConversationsList();
+  setupMessagesMood();
 
   const params = new URLSearchParams(window.location.search);
   const openUser = params.get("u");
@@ -141,6 +146,7 @@ function setupMessagesHeader() {
   let timer = null;
 
   input.addEventListener("input", () => {
+    userSearchVersion += 1;
     const q = input.value.trim();
 
     clearTimeout(timer);
@@ -171,6 +177,7 @@ function setupMessagesHeader() {
 ========================= */
 
 async function searchUsers(q) {
+  const version = userSearchVersion;
   const results =
     document.getElementById("user-search-results");
 
@@ -191,6 +198,8 @@ async function searchUsers(q) {
     const users = await Api.get(
       `/api/users/search?q=${encodeURIComponent(q)}`
     );
+
+    if (version !== userSearchVersion) return;
 
     if (!users || users.length === 0) {
       results.innerHTML = `
@@ -271,6 +280,8 @@ async function searchUsers(q) {
 
   } catch (err) {
 
+    if (version !== userSearchVersion) return;
+
     results.innerHTML = `
       <div class="empty-state">
         <p>${escapeHtml(err.message)}</p>
@@ -281,6 +292,9 @@ async function searchUsers(q) {
 
 
 function hideSearchResults() {
+
+  userSearchVersion += 1;
+
   const results =
     document.getElementById("user-search-results");
 
@@ -402,6 +416,8 @@ async function openChat(username) {
 
   currentChatUsername = username;
   lastRenderedCount = 0;
+  lastRenderedSignature = "";
+  chatLoadSequence += 1;
 
   stopPolling();
 
@@ -504,6 +520,8 @@ async function sendMessage(e) {
 
   e.preventDefault();
 
+  if (sendingMessage) return;
+
   const input =
     document.getElementById("chat-input");
 
@@ -525,7 +543,10 @@ async function sendMessage(e) {
   const username =
     currentChatUsername;
 
+  sendingMessage = true;
   input.disabled = true;
+  const sendButton = document.querySelector('#chat-form button[type="submit"]');
+  if (sendButton) sendButton.disabled = true;
 
   try {
 
@@ -552,7 +573,9 @@ async function sendMessage(e) {
 
   } finally {
 
+    sendingMessage = false;
     input.disabled = false;
+    if (sendButton) sendButton.disabled = false;
     input.focus();
   }
 }
@@ -590,6 +613,7 @@ async function loadChatMessages(
     );
 
   if (!box) return;
+  const sequence = ++chatLoadSequence;
 
   try {
 
@@ -598,9 +622,12 @@ async function loadChatMessages(
         `/api/messages/${encodeURIComponent(username)}`
       );
 
+    if (currentChatUsername !== username || sequence !== chatLoadSequence) return;
+
+    const signature = messages.map((message) => `${message.id}:${message.is_read ? 1 : 0}`).join("|");
+
     if (
-      messages.length ===
-        lastRenderedCount &&
+      signature === lastRenderedSignature &&
       !forceScroll
     ) {
       return;
@@ -608,6 +635,7 @@ async function loadChatMessages(
 
     lastRenderedCount =
       messages.length;
+    lastRenderedSignature = signature;
 
     const me =
       Auth.getCurrentUser();
@@ -644,6 +672,10 @@ async function loadChatMessages(
                   ${escapeHtml(
                     m.content
                   )}
+                  <div class="chat-message-meta">
+                    <time>${escapeHtml(timeAgo(m.created_at))}</time>
+                    ${mine ? `<span>${m.is_read ? "مقروءة" : "تم الإرسال"}</span>` : `<button type="button" class="message-report" data-message-report="${escapeHtml(m.id)}">إبلاغ</button>`}
+                  </div>
                 </div>
 
               </div>
@@ -652,6 +684,8 @@ async function loadChatMessages(
           .join("");
     }
 
+
+    box.querySelectorAll(".message-report").forEach((button) => button.addEventListener("click", () => openReportModal("message", button.dataset.messageReport)));
 
     if (forceScroll) {
       setTimeout(() => {
@@ -683,5 +717,70 @@ async function loadChatMessages(
         </div>
       `;
     }
+  }
+}
+
+
+function setupMessagesMood() {
+  const form = document.getElementById("messages-mood-form");
+  if (!form) return;
+  const toggle = document.getElementById("messages-mood-toggle");
+  const input = document.getElementById("messages-mood-note");
+  toggle?.addEventListener("click", () => {
+    form.hidden = !form.hidden;
+    toggle.setAttribute("aria-expanded", String(!form.hidden));
+    toggle.textContent = form.hidden ? (toggle.dataset.hasMood === "true" ? "تعديل حالتي" : "أضف حالتك") : "إغلاق";
+  });
+  input?.addEventListener("input", () => {
+    const counter = document.getElementById("messages-mood-counter");
+    if (counter) counter.textContent = `${input.value.length}/120`;
+  });
+  loadMessagesMood();
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const key = form.querySelector('input[name="messages-mood-key"]:checked')?.value;
+    if (!key) return showToast("اختر مزاجك أولًا", "error");
+    const note = document.getElementById("messages-mood-note").value.trim();
+    try {
+      await Api.post("/api/moods", { mood_key: key, note });
+      showToast("تم حفظ مزاجك وملاحظتك", "success");
+      form.hidden = true;
+      toggle?.setAttribute("aria-expanded", "false");
+      await loadMessagesMood();
+    } catch (err) { showToast(err.message, "error"); }
+  });
+}
+
+async function loadMessagesMood() {
+  const box = document.getElementById("messages-mood-feed");
+  if (!box) return;
+  const options = document.getElementById("messages-mood-options");
+  try {
+    const [moods, feed, mine] = await Promise.all([
+      Api.get("/api/moods"), Api.get("/api/moods/feed"), Api.get("/api/moods/me").catch(() => null),
+    ]);
+    if (options) {
+      options.innerHTML = (moods || []).map((mood) => `<label><input type="radio" name="messages-mood-key" value="${escapeHtml(mood.key)}"> ${escapeHtml(mood.emoji || "")} ${escapeHtml(mood.label_ar || mood.key)}</label>`).join("");
+    }
+    const rows = [];
+    const followers = (feed || []).filter((row) => !mine || row.user.id !== Auth.getCurrentUser()?.id);
+    if (mine) rows.push(`<span class="mood-chip mood-own"><strong>${escapeHtml(mine.mood.emoji)} ${escapeHtml(mine.mood.label_ar || mine.mood.key)} · أنا</strong><small>${escapeHtml(mine.note || "بدون ملاحظة")}</small></span>`);
+    followers.forEach((row) => rows.push(`<span class="mood-chip"><strong>${escapeHtml(row.user.full_name)} · ${escapeHtml(row.mood.emoji)} ${escapeHtml(row.mood.label_ar || row.mood.key)}</strong><small>${escapeHtml(row.note || "شارك مزاجه دون ملاحظة")}</small></span>`));
+    box.innerHTML = rows.join("") || '<span class="form-hint">لا توجد حالات مزاجية من المتابعين الآن.</span>';
+    const summary = document.getElementById("messages-mood-summary");
+    if (summary) summary.textContent = mine ? `${mine.mood.emoji} ${mine.mood.label_ar || mine.mood.key}${mine.note ? ` · ${mine.note}` : ""}` : "شارك مزاجك وملاحظة قصيرة لمدة 24 ساعة";
+    const count = document.getElementById("messages-mood-count");
+    if (count) count.textContent = String(followers.length);
+    const toggle = document.getElementById("messages-mood-toggle");
+    if (toggle) { toggle.dataset.hasMood = String(!!mine); if (document.getElementById("messages-mood-form")?.hidden) toggle.textContent = mine ? "تعديل حالتي" : "أضف حالتك"; }
+    if (mine) {
+      options?.querySelectorAll('input[name="messages-mood-key"]').forEach((radio) => { radio.checked = radio.value === mine.mood.key; });
+      document.getElementById("messages-mood-note").value = mine.note || "";
+    }
+    const counter = document.getElementById("messages-mood-counter");
+    const noteInput = document.getElementById("messages-mood-note");
+    if (counter && noteInput) counter.textContent = `${noteInput.value.length}/120`;
+  } catch (err) {
+    box.innerHTML = `<span class="form-hint">${escapeHtml(err.message)}</span>`;
   }
 }

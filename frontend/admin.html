@@ -2,30 +2,21 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>لوحة الإدارة — Ytrana</title>
   <link rel="stylesheet" href="css/style.css">
+  <style>
+    .admin-shell{max-width:1100px;margin:0 auto;padding:16px}.admin-toolbar,.admin-filters,.admin-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.admin-toolbar{justify-content:space-between;margin:16px 0}.admin-filters{background:var(--y-surface);border:1px solid var(--y-border);border-radius:14px;padding:12px;margin:12px 0}.admin-filters .form-control{width:auto;min-width:150px;flex:1}.admin-card{padding:16px;margin:12px 0}.admin-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}.admin-user{display:flex;gap:12px;align-items:flex-start}.admin-user-main{min-width:0;flex:1}.admin-user-name{font-weight:700;overflow-wrap:anywhere}.admin-muted{color:var(--y-text-secondary);font-size:13px}.admin-badges{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px}.admin-badge{border-radius:999px;padding:3px 8px;font-size:11px;background:var(--y-bg);border:1px solid var(--y-border)}.admin-badge.danger{color:var(--y-danger)}.admin-badge.ok{color:var(--y-accent)}.admin-preview{background:var(--y-bg);border-radius:10px;padding:10px;margin:10px 0;white-space:pre-wrap;overflow-wrap:anywhere}.admin-note{width:100%;min-height:58px}.admin-pagination{display:flex;justify-content:center;gap:8px;margin:18px 0}.admin-empty{text-align:center;padding:30px;color:var(--y-text-secondary)}.admin-status{min-height:20px;color:var(--y-text-secondary)}
+    @media(max-width:560px){.admin-shell{padding:10px}.admin-toolbar{align-items:stretch}.admin-toolbar>*{width:100%}.admin-filters .form-control,.admin-filters .btn{width:100%;min-width:0}.admin-actions .btn{flex:1;min-width:110px}.admin-card{padding:12px}}
+  </style>
 </head>
 <body class="dir-rtl">
-  <header class="y-header">
-    <a href="index.html" class="y-logo">Ytrana Admin</a>
-    <a href="index.html" class="btn btn-outline btn-sm">العودة للتطبيق</a>
-  </header>
-
-  <main class="container">
-    <div class="tabs">
-      <button class="tab-btn active" id="admin-tab-users">المستخدمون</button>
-      <button class="tab-btn" id="admin-tab-reports">البلاغات</button>
-    </div>
-    <div id="admin-content"></div>
+  <header class="y-header"><a href="index.html" class="y-logo">Ytrana Admin</a><a href="index.html" class="btn btn-outline btn-sm">العودة للتطبيق</a></header>
+  <main class="admin-shell">
+    <div class="admin-intro"><h1>مركز الثقة والأمان</h1><p>إدارة توثيق الحسابات ومراجعة البلاغات، بقرارات واضحة ومسؤولة.</p></div>
+    <div class="tabs"><button class="tab-btn active" id="admin-tab-users">المستخدمون</button><button class="tab-btn" id="admin-tab-reports">البلاغات</button></div>
+    <section id="admin-content" aria-live="polite"></section>
   </main>
-
-  <script src="js/config.js"></script>
-  <script src="js/api.js"></script>
-  <script src="js/auth.js"></script>
-  <script src="js/theme.js"></script>
-  <script src="js/toast.js"></script>
-  <script src="js/avatar.js"></script>
-  <script src="js/admin.js"></script>
+  <script src="js/config.js"></script><script src="js/api.js"></script><script src="js/auth.js"></script><script src="js/theme.js"></script><script src="js/toast.js"></script><script src="js/avatar.js"></script><script src="js/admin.js"></script>
 </body>
 </html>

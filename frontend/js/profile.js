@@ -1,6 +1,8 @@
 // منطق صفحة الملف الشخصي
 let profileUsername = null;
 let profileTab = "posts";
+let currentProfile = null;
+let profileLoadId = 0;
 
 document.addEventListener("DOMContentLoaded", () => {
   Layout.init("profile");
@@ -36,6 +38,7 @@ function switchTab(tab) {
 }
 
 async function loadProfile() {
+  const loadId = ++profileLoadId;
   const box = document.getElementById("profile-header");
 
   box.innerHTML = '<div class="loading-spinner"></div>';
@@ -45,8 +48,13 @@ async function loadProfile() {
       `/api/users/${encodeURIComponent(profileUsername)}`
     );
 
+    if (loadId !== profileLoadId) return;
+
+    currentProfile = profile;
     const me = Auth.getCurrentUser();
     const isMe = me && me.id === profile.id;
+    const followStatus = profile.follow_status || (profile.is_followed_by_me ? "accepted" : null);
+    const isPrivateRestricted = !isMe && profile.account_visibility === "private" && profile.can_view_content === false && followStatus !== "accepted";
 
     box.innerHTML = `
       <div style="display:flex; justify-content:center;">
@@ -54,7 +62,7 @@ async function loadProfile() {
       </div>
 
       <h2 style="margin-top:12px; font-size:19px;">
-        ${escapeHtml(profile.full_name)}
+        ${escapeHtml(profile.full_name)}${profile.is_verified ? ' <span class="verified-badge" role="img" title="حساب موثّق" aria-label="حساب موثّق"></span>' : ""}
       </h2>
 
       <div class="post-meta">
@@ -62,9 +70,9 @@ async function loadProfile() {
       </div>
 
       ${
-        profile.bio
+        !isPrivateRestricted && profile.bio
           ? `<p class="profile-bio">${escapeHtml(profile.bio)}</p>`
-          : ""
+          : isPrivateRestricted ? `<p class="form-hint">هذا حساب خاص. وافق صاحب الحساب على طلب المتابعة لرؤية التفاصيل والمحتوى.</p>` : ""
       }
 
       <div class="profile-stats">
@@ -96,16 +104,10 @@ async function loadProfile() {
               <button
                 id="follow-btn"
                 class="btn ${
-                  profile.is_followed_by_me
-                    ? "btn-outline"
-                    : "btn-primary"
+                  followStatus === "accepted" ? "btn-outline" : "btn-primary"
                 } btn-sm"
               >
-                ${
-                  profile.is_followed_by_me
-                    ? "إلغاء المتابعة"
-                    : "متابعة"
-                }
+                ${followStatus === "accepted" ? "إلغاء المتابعة" : followStatus === "pending" ? "إلغاء طلب المتابعة" : "متابعة"}
               </button>
 
               <button
@@ -126,6 +128,10 @@ async function loadProfile() {
       </div>
     `;
 
+    loadStars(profileUsername, document.getElementById("profile-stars"), {
+      isCurrent: () => loadId === profileLoadId
+    });
+
     if (!isMe) {
 
       // زر المتابعة
@@ -135,24 +141,20 @@ async function loadProfile() {
 
           const btn = e.currentTarget;
 
-          const following =
-            btn.textContent.trim() === "إلغاء المتابعة";
+          const following = followStatus === "accepted";
+          const pending = followStatus === "pending";
 
           btn.disabled = true;
 
           try {
 
-            if (following) {
-              await Api.del(
-                `/api/users/${encodeURIComponent(profileUsername)}/follow`
-              );
+            if (following || pending) {
+              await Api.del(`/api/users/${encodeURIComponent(profileUsername)}/follow`);
             } else {
-              await Api.post(
-                `/api/users/${encodeURIComponent(profileUsername)}/follow`
-              );
+              await Api.post(`/api/users/${encodeURIComponent(profileUsername)}/follow`);
             }
 
-            loadProfile();
+            await loadProfile();
 
           } catch (err) {
 
@@ -191,6 +193,8 @@ async function loadProfile() {
 
   } catch (err) {
 
+    if (loadId !== profileLoadId) return;
+
     box.innerHTML = `
       <div class="empty-state">
         <p>${escapeHtml(err.message)}</p>
@@ -208,12 +212,19 @@ async function loadTabContent() {
     '<div class="loading-spinner"></div>';
 
   try {
+    const current = currentProfile || await Api.get(`/api/users/${encodeURIComponent(profileUsername)}`);
+    const me = Auth.getCurrentUser();
+    const restricted = !(me && me.id === current.id) && current.account_visibility === "private" && current.can_view_content === false && current.follow_status !== "accepted" && !current.is_followed_by_me;
+    if (restricted) {
+      container.innerHTML = '<div class="empty-state"><p>هذا الحساب خاص. أرسل طلب متابعة لرؤية المحتوى.</p></div>';
+      return;
+    }
 
     if (profileTab === "posts") {
 
-      const posts = await Api.get(
+      const posts = await enrichPostMedia(await Api.get(
         `/api/posts/user/${encodeURIComponent(profileUsername)}`
-      );
+      ));
 
       container.innerHTML = posts.length
         ? posts.map(renderPostCard).join("")
@@ -255,12 +266,8 @@ async function loadTabContent() {
     }
 
   } catch (err) {
-
-    container.innerHTML = `
-      <div class="empty-state">
-        <p>${escapeHtml(err.message)}</p>
-      </div>
-    `;
+    const denied = /403|ممنوع|خاص|غير مسموح/i.test(err.message || "");
+    container.innerHTML = `<div class="empty-state"><p>${denied ? "هذه القائمة متاحة للمتابعين المقبولين فقط." : escapeHtml(err.message)}</p></div>`;
   }
 }
 

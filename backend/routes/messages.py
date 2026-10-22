@@ -2,16 +2,16 @@
 مسارات الدردشة (Messages) — محادثات ثنائية بين المستخدمين.
 شبه فورية عبر Polling (الفرونت إند يسأل كل بضع ثوانٍ).
 """
-from datetime import datetime
-
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import or_, and_
 from sqlalchemy.orm import Session
 
 from database.db import get_db
 from middleware.auth_dependency import get_current_user
-from models.models import User, Conversation, Message
+from models.models import User, Conversation, Message, utcnow_naive
 from schemas.schemas import MessageCreate, MessageOut, ConversationOut
+from services.content_access import can_send_member_dm
+from services.account_privacy import require_message_access
 
 router = APIRouter(prefix="/api/messages", tags=["Messages"])
 
@@ -123,7 +123,15 @@ def get_conversation_messages(
     if other.id == current_user.id:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="لا يمكنك مراسلة نفسك")
 
-    conv = _get_or_create_conversation(db, current_user.id, other.id)
+    conv = db.query(Conversation).filter(
+        or_(and_(Conversation.user1_id == min(current_user.id, other.id), Conversation.user2_id == max(current_user.id, other.id)),
+            and_(Conversation.user1_id == max(current_user.id, other.id), Conversation.user2_id == min(current_user.id, other.id)))
+    ).first()
+    # Existing conversations remain readable after approval is revoked.
+    if conv is None:
+        if not can_send_member_dm(db, current_user.id, other.id):
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="مراسلة أعضاء الدائرة تتطلب موافقة المالك")
+        conv = _get_or_create_conversation(db, current_user.id, other.id)
 
     messages = (
         db.query(Message)
@@ -155,7 +163,12 @@ def send_message(
     if other.id == current_user.id:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="لا يمكنك مراسلة نفسك")
 
+    require_message_access(db, current_user, other)
+    if not can_send_member_dm(db, current_user.id, other.id, payload.circle_id):
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="مراسلة أعضاء الدائرة تتطلب موافقة المالك")
     conv = _get_or_create_conversation(db, current_user.id, other.id)
+    if payload.circle_id and conv.circle_id is None:
+        conv.circle_id = payload.circle_id
 
     message = Message(
         conversation_id=conv.id,
@@ -163,7 +176,7 @@ def send_message(
         content=payload.content,
     )
     db.add(message)
-    conv.last_message_at = datetime.utcnow()
+    conv.last_message_at = utcnow_naive()
     db.commit()
     db.refresh(message)
     return message

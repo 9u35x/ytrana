@@ -2,9 +2,10 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>الإعدادات — Ytrana</title>
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/security.css">
 </head>
 <body class="dir-rtl">
   <header class="y-header" id="y-header"></header>
@@ -53,6 +54,105 @@
           <button type="submit" class="btn btn-primary btn-block">تغيير كلمة المرور</button>
         </form>
       </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-section-title">حماية الحساب — التحقق بخطوتين</div>
+      <div class="card" style="padding: var(--y-space-4);">
+        <p class="form-hint" id="mfa-provider-note">التحقق بخطوتين اختياري. ابدأ مجانًا بتطبيق مصادقة مثل Google Authenticator؛ البريد وSMS يحتاجان إعداد حسابات مزوّد، وقد تترتب رسوم على SMS.</p>
+        <div class="settings-row">
+          <span>تطبيق المصادقة (TOTP) <small id="mfa-totp-status" class="form-hint"></small></span>
+          <button id="mfa-totp-enable" type="button" class="btn btn-outline btn-sm">إعداد</button>
+          <button id="mfa-totp-disable" type="button" class="btn btn-outline btn-sm" hidden>إيقاف</button>
+        </div>
+        <div id="mfa-totp-setup" hidden class="form-group mt-4">
+          <p class="form-hint">أضف هذا المفتاح يدوياً في تطبيق مصادقة متوافق. لا تشاركه مع أحد.</p>
+          <input id="mfa-totp-secret" class="form-control" readonly aria-label="مفتاح تطبيق المصادقة">
+          <label class="form-label mt-2" for="mfa-totp-code">اكتب الرمز الذي يظهر في التطبيق</label>
+          <input id="mfa-totp-code" class="form-control" inputmode="numeric" autocomplete="one-time-code" maxlength="6">
+          <button id="mfa-totp-confirm-btn" type="button" class="btn btn-primary btn-block mt-2">تأكيد وتفعيل التطبيق</button>
+        </div>
+
+        <div class="settings-row mt-4">
+          <span>رمز إلى البريد الإلكتروني <small id="mfa-email-status" class="form-hint"></small></span>
+          <button id="mfa-email-enable" type="button" class="btn btn-outline btn-sm">تفعيل</button>
+          <button id="mfa-email-disable" type="button" class="btn btn-outline btn-sm" hidden>إيقاف</button>
+        </div>
+        <div id="mfa-email-confirm" hidden class="form-group mt-4">
+          <label class="form-label" for="mfa-email-code">أدخل الرمز المرسل إلى بريدك</label>
+          <input id="mfa-email-code" class="form-control" inputmode="numeric" autocomplete="one-time-code" maxlength="6">
+          <button id="mfa-email-confirm-btn" type="button" class="btn btn-primary btn-block mt-2">تأكيد البريد وتفعيل</button>
+        </div>
+
+        <div class="settings-row mt-4">
+          <span>رمز SMS (قد تترتب رسوم) <small id="mfa-sms-status" class="form-hint"></small></span>
+          <button id="mfa-sms-enable" type="button" class="btn btn-outline btn-sm">تفعيل</button>
+          <button id="mfa-sms-disable" type="button" class="btn btn-outline btn-sm" hidden>إيقاف</button>
+        </div>
+        <div id="mfa-sms-setup" hidden class="form-group mt-4">
+          <label class="form-label" for="mfa-phone">رقم الهاتف بصيغته الدولية</label>
+          <input id="mfa-phone" type="tel" class="form-control" autocomplete="tel" placeholder="+9647XXXXXXXXX">
+          <button id="mfa-sms-send" type="button" class="btn btn-outline btn-block mt-2">إرسال رمز التحقق للهاتف</button>
+          <div id="mfa-sms-confirm" hidden class="form-group mt-2">
+            <label class="form-label" for="mfa-sms-code">رمز SMS (6 أرقام)</label>
+            <input id="mfa-sms-code" class="form-control" inputmode="numeric" autocomplete="one-time-code" maxlength="6">
+            <button id="mfa-sms-confirm-btn" type="button" class="btn btn-primary btn-block mt-2">تأكيد الهاتف وتفعيل</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-section-title">الحساب</div>
+      <div class="card settings-card settings-expanded" aria-labelledby="privacy-title">
+        <h2 id="privacy-title">الخصوصية</h2>
+        <p class="form-hint">الحساب الخاص يعرض معاينة عامة فقط لغير المتابعين المقبولين، ولا يلغي المتابعين الحاليين. للمجتمعات وصفحات الأعمال ظهور مستقل مع احترام خصوصية منشوراتك الشخصية. الرسائل والتعليقات على محتوى الآخرين تخضع لخصوصية وجهتها أيضاً.</p>
+        <form id="privacy-form">
+          <label class="form-label" for="account-visibility">ظهور الحساب</label>
+          <select id="account-visibility" class="form-control"><option value="public">عام</option><option value="private">خاص — أوافق على طلبات المتابعة</option></select>
+          <label class="form-label mt-4" for="message-privacy">من يستطيع مراسلتي؟</label>
+          <select id="message-privacy" class="form-control"><option value="everyone">الجميع</option><option value="following">الأشخاص الذين أتابعهم</option><option value="followers">المتابعون</option><option value="nobody">لا أحد</option></select>
+          <label class="form-label mt-4" for="comment-privacy">من يستطيع التعليق على منشوراتي؟</label>
+          <select id="comment-privacy" class="form-control"><option value="everyone">الجميع</option><option value="followers">المتابعون</option><option value="following">الأشخاص الذين أتابعهم</option><option value="nobody">لا أحد</option></select>
+          <label class="form-label mt-4" for="show-activity-status">إظهار الحالة المزاجية الحالية</label>
+          <select id="show-activity-status" class="form-control"><option value="true">تشغيل</option><option value="false">إيقاف</option></select>
+          <p class="form-hint">يتحكم بالحالة المزاجية المنشورة فقط؛ لا يضيف تتبع اتصال أو آخر ظهور.</p>
+          <label class="form-label mt-4" for="content-visibility">جمهور المنشورات والقصص والريلز ضمن خصوصية الحساب</label>
+          <select id="content-visibility" class="form-control"><option value="everyone">الجميع ضمن جمهور حسابي</option><option value="followers">المتابعون</option></select>
+          <p class="form-hint">اختيار الجميع لا يفتح الحساب الخاص لغير المتابعين المقبولين. تبقى اختياراتك الحالية كما هي حتى تحفظ التغيير.</p>
+          <button class="btn btn-primary btn-block mt-4" type="submit">حفظ الخصوصية</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-section-title">طلبات المتابعة</div>
+      <div class="card settings-card settings-expanded">
+        <p class="form-hint">تظهر هنا الطلبات المعلّقة عندما يكون حسابك خاصًا.</p>
+        <div id="follow-requests-list" class="settings-list" aria-live="polite"><span class="form-hint">جارٍ التحميل…</span></div>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-section-title">الأرشيف</div>
+      <div class="card settings-card settings-expanded">
+        <div class="settings-tabs" role="tablist"><button type="button" class="btn btn-outline btn-sm is-active" data-archive-kind="posts">المنشورات</button><button type="button" class="btn btn-outline btn-sm" data-archive-kind="stories">القصص</button><button type="button" class="btn btn-outline btn-sm is-active" data-archive-state="archived">المؤرشف</button><button type="button" class="btn btn-outline btn-sm" data-archive-state="active">النشط</button></div>
+        <p class="form-hint">المحتوى المؤرشف يختفي من الخلاصات دون حذفه، ويمكن استعادته في أي وقت.</p>
+        <div id="archive-list" class="settings-list" aria-live="polite"><span class="form-hint">جارٍ التحميل…</span></div>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-section-title">نشاط الحساب</div>
+      <div class="card settings-card settings-expanded">
+        <div class="settings-tabs" role="tablist"><button type="button" class="btn btn-outline btn-sm is-active" data-activity-kind="all">الكل</button><button type="button" class="btn btn-outline btn-sm" data-activity-kind="comments">التعليقات</button><button type="button" class="btn btn-outline btn-sm" data-activity-kind="likes">الإعجابات</button></div>
+        <div id="activity-list" class="settings-list" aria-live="polite"><span class="form-hint">جارٍ التحميل…</span></div>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-section-title">حالة الحساب</div>
+      <div class="card settings-card settings-status" id="account-status" aria-live="polite"><span class="form-hint">جارٍ التحميل…</span></div>
     </div>
 
     <div class="settings-section">

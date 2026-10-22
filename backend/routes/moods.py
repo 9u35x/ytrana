@@ -2,15 +2,17 @@
 مسارات المزاج (Mood) — حالة مزاجية مؤقتة (24 ساعة) تشبه القصص،
 وتُستخدم أيضًا للتأثير على ترتيب/تصفية المحتوى بالخلاصة مستقبلاً.
 """
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from database.db import get_db
 from middleware.auth_dependency import get_current_user
-from models.models import User, Mood, MoodStatus, Follower
+from models.models import User, Mood, MoodStatus, Follower, utcnow_naive
 from schemas.schemas import MoodOut, MoodStatusCreate, MoodStatusOut
+from services.content_access import can_view_account_content
+from services import account_privacy
 
 router = APIRouter(prefix="/api/moods", tags=["Moods"])
 
@@ -33,7 +35,7 @@ def get_my_mood(
         db.query(MoodStatus)
         .filter(
             MoodStatus.user_id == current_user.id,
-            MoodStatus.expires_at > datetime.utcnow(),
+            MoodStatus.expires_at > utcnow_naive(),
         )
         .order_by(MoodStatus.created_at.desc())
         .first()
@@ -56,7 +58,7 @@ def set_my_mood(
         user_id=current_user.id,
         mood_id=mood.id,
         note=payload.note,
-        expires_at=datetime.utcnow() + timedelta(hours=MOOD_DURATION_HOURS),
+        expires_at=utcnow_naive() + timedelta(hours=MOOD_DURATION_HOURS),
     )
     db.add(new_status)
     db.commit()
@@ -72,8 +74,8 @@ def clear_my_mood(
     """إخفاء مزاجي الحالي فورًا (بدون انتظار انتهاء الـ 24 ساعة)."""
     db.query(MoodStatus).filter(
         MoodStatus.user_id == current_user.id,
-        MoodStatus.expires_at > datetime.utcnow(),
-    ).update({"expires_at": datetime.utcnow()})
+        MoodStatus.expires_at > utcnow_naive(),
+    ).update({"expires_at": utcnow_naive()})
     db.commit()
     return None
 
@@ -94,9 +96,13 @@ def mood_feed(
         db.query(MoodStatus)
         .filter(
             MoodStatus.user_id.in_(following_ids),
-            MoodStatus.expires_at > datetime.utcnow(),
+            MoodStatus.expires_at > utcnow_naive(),
         )
         .order_by(MoodStatus.created_at.desc())
         .all()
     )
+    statuses = [s for s in statuses if can_view_account_content(db, s.user, current_user)]
+    status_helper = getattr(account_privacy, "can_view_activity_status", None)
+    if status_helper:
+        statuses = [s for s in statuses if status_helper(db, s.user, current_user)]
     return statuses

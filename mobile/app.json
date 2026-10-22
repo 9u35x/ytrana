@@ -1,0 +1,40 @@
+{
+  "expo": {
+    "name": "Ytrana",
+    "slug": "ytrana-social",
+    "version": "0.1.7",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "app.ytrana.social",
+      "buildNumber": "5"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#4521D8",
+        "foregroundImage": "./assets/icon.png"
+      },
+      "package": "app.ytrana.social",
+      "versionCode": 8,
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-secure-store",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "يحتاج Ytrana إلى إذن الصور لاختيار صورة أو مقطع قصير ومشاركته.",
+          "cameraPermission": false,
+          "microphonePermission": false
+        }
+      ],
+      "expo-video",
+      "expo-font"
+    ]
+  }
+}

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"><meta name="theme-color" content="#6C5CE7"><title>التحديات · Ytrana</title><link rel="stylesheet" href="css/style.css"><link rel="stylesheet" href="css/community.css">  <link rel="stylesheet" href="css/report-dialog.css">
+</head>
+<body class="dir-rtl">
+  <header class="y-header" id="y-header"></header>
+  <main class="container feature-page">
+    <a class="feature-back" href="community.html">‹ العودة إلى المجتمع</a>
+    <section id="challenge-list-view">
+      <div class="feature-hero card"><span class="feature-icon">✦</span><div><h1>التحديات</h1><p>أنشطة يومية وأسبوعية بمشاركة واحدة لكل عضو.</p></div></div>
+      <section id="challenge-admin" class="card feature-panel hidden"><h2>لوحة إدارة التحديات</h2>
+        <form id="challenge-create-form" class="feature-form">
+          <label class="form-label">عنوان التحدي<input class="form-control" name="title" minlength="3" maxlength="120" required></label>
+          <label class="form-label">التفاصيل<textarea class="form-control" name="description" maxlength="2000"></textarea></label>
+          <div class="form-row"><label class="form-label">الدورية<select class="form-control" name="period"><option value="daily">يومي</option><option value="weekly" selected>أسبوعي</option></select></label><label class="form-label">رابط صورة اختياري<input class="form-control" name="image_url" type="url" maxlength="255"></label></div>
+          <div class="form-row"><label class="form-label">يبدأ<input class="form-control" name="starts_at" type="datetime-local" required></label><label class="form-label">ينتهي<input class="form-control" name="ends_at" type="datetime-local" required></label></div>
+          <button class="btn btn-primary" type="submit">إنشاء التحدي</button>
+        </form>
+      </section>
+      <section class="card feature-panel"><h2>إنجازاتي</h2><div id="challenge-achievements" class="feature-inline"><div class="loading-spinner"></div></div></section>
+      <div class="feature-tabs" id="challenge-tabs">
+        <button class="tab-btn active" data-state="all">الكل</button><button class="tab-btn" data-state="active">نشط</button><button class="tab-btn" data-state="upcoming">قادم</button><button class="tab-btn" data-state="ended">منتهٍ</button><button class="tab-btn" data-state="paused">موقوف</button>
+      </div>
+      <div id="challenge-list" class="feature-list"><div class="loading-spinner"></div></div>
+    </section>
+    <section id="challenge-detail-view" class="hidden"><a class="feature-back" href="challenges.html">‹ كل التحديات</a><div id="challenge-detail"></div>
+      <form id="challenge-post-form" class="card feature-panel feature-form hidden"><h2>شارك في التحدي</h2><textarea class="form-control" name="content" maxlength="3000" placeholder="اكتب مشاركتك…"></textarea><label class="form-label">صورة أو فيديو اختياري <input class="form-control" type="file" name="media" accept="image/*,video/*"></label><button class="btn btn-primary" type="submit">نشر المشاركة</button></form>
+      <section class="card feature-panel"><h2>لوحة المشاركات</h2><div id="challenge-entries"></div></section>
+    </section>
+  </main>
+  <nav class="y-bottom-nav" id="y-bottom-nav"></nav>
+  <script src="js/config.js"></script><script src="js/api.js"></script><script src="js/auth.js"></script><script src="js/theme.js"></script><script src="js/toast.js"></script><script src="js/avatar.js"></script><script src="js/layout.js"></script><script src="js/post-card.js"></script><script src="js/challenges.js"></script>
+</body></html>

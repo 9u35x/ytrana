@@ -1,0 +1,23 @@
+/* إضافات صغيرة لحالات OTP والإشعارات، مع احترام السمة hidden في جميع الصفحات. */
+[hidden] { display: none !important; }
+.notif-unread-dot {
+  width: 9px;
+  height: 9px;
+  flex: 0 0 9px;
+  border-radius: 50%;
+  background: var(--y-primary);
+}
+#mark-all-read:disabled {
+  opacity: 0.65;
+  cursor: default;
+}
+/* Expanded account settings */
+.settings-card{padding:var(--y-space-4)}
+.settings-card h2{font-size:18px;margin-bottom:6px}
+.settings-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.settings-tabs .is-active{border-color:var(--y-primary);color:var(--y-primary);background:color-mix(in srgb,var(--y-primary) 8%,var(--y-surface))}
+.settings-list{display:grid;gap:8px;margin-top:14px}
+.settings-list-item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px;border:1px solid var(--y-border);border-radius:var(--y-radius-sm);background:var(--y-bg)}
+.settings-list-item strong,.settings-list-item small{display:block}.settings-list-item small{color:var(--y-text-secondary);font-size:12px;margin-top:4px}
+.settings-status{min-height:70px}.status-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:14px}.status-grid span{color:var(--y-text-secondary)}
+@media(max-width:420px){.settings-list-item{align-items:flex-start;flex-direction:column}.settings-list-item .btn{width:100%}}

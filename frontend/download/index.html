@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f7f5ff">
+  <meta name="description" content="حمّل Ytrana على Android أو أضف نسخة الويب إلى الشاشة الرئيسية على iPhone مجانًا.">
+  <meta property="og:title" content="تنزيل Ytrana — يترانا">
+  <meta property="og:description" content="ابدأ باستخدام Ytrana على Android أو iPhone.">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <title>تنزيل Ytrana — يترانا</title>
+  <style>
+    :root{color-scheme:light;--ink:#211d35;--muted:#6f6a83;--purple:#6c5ce7;--purple-dark:#5042c4;--line:#e8e4f4;--surface:#fff;--lavender:#f4f1ff;--mint:#e8f8f1}
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;background:radial-gradient(ellipse at 90% 0%,#e9e3ff 0,transparent 34rem),#f7f5ff;color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Tahoma,Arial,sans-serif;line-height:1.7}
+    a{color:inherit}
+    .wrap{width:min(1080px,calc(100% - 36px));margin-inline:auto}
+    header{padding:24px 0}
+    .topbar{display:flex;align-items:center;justify-content:space-between;gap:18px}
+    .brand{display:inline-flex;align-items:center;gap:11px;text-decoration:none;font-weight:850;font-size:1.13rem;letter-spacing:.01em}
+    .brand img{width:42px;height:42px;border-radius:14px;box-shadow:0 5px 16px #6c5ce72b}
+    .toplink{font-size:.95rem;font-weight:700;color:var(--purple-dark);text-decoration:none;padding:9px 14px;border:1px solid #d9d2fa;border-radius:999px;background:#ffffffa8}
+    main{padding:26px 0 70px}
+    .hero{position:relative;overflow:hidden;border:1px solid #e6e0fb;border-radius:32px;background:linear-gradient(130deg,#fff 5%,#f5f1ff 63%,#eeebff);padding:clamp(28px,6vw,66px);box-shadow:0 24px 70px #3d2b7910}
+    .hero:before{content:"";position:absolute;width:300px;height:300px;border-radius:50%;background:#dcd4ff88;inset-inline-start:-140px;bottom:-180px;filter:blur(2px)}
+    .hero-content{position:relative;max-width:720px}
+    .eyebrow{display:inline-flex;align-items:center;gap:8px;background:#eeeaff;color:var(--purple-dark);border-radius:999px;padding:6px 13px;font-size:.86rem;font-weight:750}
+    h1{font-size:clamp(2.1rem,6vw,4.15rem);line-height:1.12;letter-spacing:-.04em;margin:18px 0 15px}
+    h1 span{color:var(--purple)}
+    .lead{font-size:clamp(1.02rem,2vw,1.2rem);color:var(--muted);max-width:640px;margin:0}
+    .actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
+    .button{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:54px;padding:13px 21px;border-radius:16px;text-decoration:none;font-weight:800;transition:transform .16s,box-shadow .16s}
+    .button:hover{transform:translateY(-2px)}
+    .button-primary{background:var(--purple);color:white;box-shadow:0 10px 24px #6c5ce740}
+    .button-primary:hover{background:var(--purple-dark)}
+    .button-secondary{background:#fff;color:var(--ink);border:1px solid var(--line)}
+    .meta{display:flex;flex-wrap:wrap;gap:9px 18px;margin-top:19px;color:var(--muted);font-size:.9rem}
+    .meta span{display:inline-flex;align-items:center;gap:6px}
+    .section-title{font-size:clamp(1.45rem,3vw,2rem);line-height:1.3;margin:0 0 9px;letter-spacing:-.02em}
+    .section-lead{color:var(--muted);margin:0 0 22px}
+    .platforms{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:24px}
+    .card{background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:clamp(22px,4vw,32px);box-shadow:0 12px 34px #33245d08}
+    .card-head{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+    .platform-icon{width:54px;height:54px;display:grid;place-items:center;flex:none;border-radius:18px;background:var(--lavender);font-size:1.65rem}
+    .platform-icon.ios{background:var(--mint)}
+    .card h2{font-size:1.3rem;margin:0;line-height:1.35}
+    .card-kicker{color:var(--muted);font-size:.9rem;margin:2px 0 0}
+    .card p{color:var(--muted);margin:0 0 17px}
+    .small-button{min-height:47px;padding:10px 16px;border-radius:14px;width:100%}
+    .steps{list-style:none;padding:0;margin:0;counter-reset:steps;display:grid;gap:12px}
+    .steps li{counter-increment:steps;display:grid;grid-template-columns:34px 1fr;align-items:start;gap:10px;color:var(--ink)}
+    .steps li:before{content:counter(steps);display:grid;place-items:center;width:30px;height:30px;border-radius:10px;background:var(--mint);color:#1f8059;font-weight:850;font-size:.9rem}
+    .note{margin-top:18px;border-radius:14px;background:#f7f6fb;padding:12px 14px;color:var(--muted);font-size:.88rem}
+    .note strong{color:var(--ink)}
+    .bottom-cta{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-top:24px;padding:22px 26px;border-radius:22px;background:#26213d;color:white}
+    .bottom-cta p{margin:3px 0 0;color:#d9d5e9;font-size:.94rem}
+    .bottom-cta .button{background:white;color:#302850;white-space:nowrap;min-height:46px;padding:10px 16px;border-radius:13px}
+    footer{padding:0 0 30px;color:var(--muted);font-size:.9rem}
+    .foot{display:flex;justify-content:space-between;align-items:center;gap:14px;border-top:1px solid var(--line);padding-top:20px}
+    .foot a{color:var(--purple-dark);font-weight:700;text-decoration:none}
+    @media(max-width:760px){.platforms{grid-template-columns:1fr}.hero{border-radius:25px}.bottom-cta{align-items:flex-start;flex-direction:column}.bottom-cta .button{width:100%}}
+    @media(max-width:440px){.wrap{width:min(100% - 24px,1080px)}header{padding:17px 0}.brand img{width:37px;height:37px}.toplink{font-size:.84rem;padding:8px 11px}.hero{padding:25px 20px}.actions .button{width:100%}.card{border-radius:20px;padding:22px 19px}.foot{align-items:flex-start;flex-direction:column}}
+    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.button{transition:none}}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap topbar">
+      <a class="brand" href="/" aria-label="Ytrana — الصفحة الرئيسية">
+        <img src="/apple-touch-icon.png" width="42" height="42" alt="">
+        <span>Ytrana <span lang="ar">· يترانا</span></span>
+      </a>
+      <a class="toplink" href="/">افتح الموقع</a>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-content">
+        <span class="eyebrow">مساحتك الاجتماعية، أينما كنت</span>
+        <h1 id="hero-title">ابدأ مع <span>يترانا</span></h1>
+        <p class="lead">نزّل تطبيق Android، أو افتح الموقع على iPhone وأضفه إلى الشاشة الرئيسية لتصل إليه مثل التطبيق. الاستخدام عبر الويب مجاني ولا يحتاج إلى App Store.</p>
+        <div class="actions">
+          <a class="button button-primary" href="#platforms">اختر جهازك <span aria-hidden="true">←</span></a>
+          <a class="button button-secondary" href="/">زيارة موقع Ytrana</a>
+        </div>
+        <div class="meta" aria-label="معلومات الإصدار">
+          <span>الإصدار 0.1.7</span>
+          <span>ملف Android: نحو 80.4 MiB</span>
+          <span>صفحة ويب متوافقة مع الهاتف</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="platforms" aria-labelledby="platform-title" style="padding-top:34px">
+      <h2 class="section-title" id="platform-title">اختر طريقة الاستخدام</h2>
+      <p class="section-lead">اتبع التعليمات المناسبة لجهازك.</p>
+      <div class="platforms">
+        <article class="card">
+          <div class="card-head">
+            <div class="platform-icon" aria-hidden="true">🤖</div>
+            <div><h2>Android</h2><p class="card-kicker">تنزيل ملف APK</p></div>
+          </div>
+          <p>حمّل النسخة الرسمية من Ytrana لنظام Android. قد يطلب هاتفك السماح بالتثبيت من المتصفح الذي استخدمته للتنزيل.</p>
+          <a class="button button-primary small-button" href="/downloads/Ytrana-Android-0.1.7.apk" download>تنزيل Ytrana لنظام Android</a>
+          <div class="note"><strong>معلومة:</strong> قد يعرض Android تنبيهًا لأن التطبيق يُثبّت من خارج Google Play. تابع فقط إذا كنت تثق بمصدر الملف.</div>
+        </article>
+
+        <article class="card">
+          <div class="card-head">
+            <div class="platform-icon ios" aria-hidden="true"></div>
+            <div><h2>iPhone</h2><p class="card-kicker">إضافة نسخة الويب إلى الشاشة الرئيسية</p></div>
+          </div>
+          <p>افتح Ytrana في متصفح Safari، ثم أضف الموقع إلى الشاشة الرئيسية لتشغيله بواجهة قريبة من التطبيق.</p>
+          <ol class="steps">
+            <li>اضغط «افتح Ytrana على iPhone» أدناه، وتأكد من فتح الرابط في Safari.</li>
+            <li>اضغط زر المشاركة في Safari <span aria-label="مشاركة">↑</span>.</li>
+            <li>اختر «إضافة إلى الشاشة الرئيسية»، ثم اضغط «إضافة».</li>
+          </ol>
+          <a class="button button-secondary small-button" style="margin-top:18px" href="/">افتح Ytrana على iPhone</a>
+          <div class="note"><strong>للتوضيح:</strong> هذه نسخة ويب قابلة للإضافة إلى الشاشة الرئيسية، وليست تطبيقًا أصليًا منشورًا في App Store.</div>
+        </article>
+      </div>
+    </section>
+
+    <section class="bottom-cta" aria-label="رابط الموقع">
+      <div><strong>رابط موقع Ytrana</strong><p>استخدم المنصة مباشرة من المتصفح على الهاتف أو الكمبيوتر.</p></div>
+      <a class="button" href="/">270zw.pythonanywhere.com</a>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap foot">
+      <span>© <span id="year">2026</span> Ytrana · يترانا</span>
+      <a href="/">الانتقال إلى الموقع</a>
+    </div>
+  </footer>
+</body>
+</html>

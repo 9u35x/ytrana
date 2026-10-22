@@ -2,30 +2,28 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#6C5CE7">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Ytrana">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <title>Ytrana</title>
   <link rel="stylesheet" href="css/style.css">
-  <style>
-    #mood-bar { display: flex; gap: 14px; overflow-x: auto; padding: 14px 4px; margin-bottom: 8px; }
-    .mood-item { display: flex; flex-direction: column; align-items: center; gap: 4px; flex-shrink: 0; cursor: pointer; width: 64px; }
-    .mood-ring { width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 26px; border: 2px dashed #ccc; }
-    .mood-ring.has-mood { border: 3px solid var(--mood-color, #7C5CFF); background: color-mix(in srgb, var(--mood-color, #7C5CFF) 15%, transparent); }
-    .mood-ring.empty { border: 2px dashed #b9b9c7; }
-    .mood-item-label { font-size: 11px; color: var(--y-text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 64px; }
-    #mood-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: flex-end; z-index: 60; }
-    #mood-modal.show { display: flex; }
-    .mood-modal-box { background: var(--y-bg, #fff); width: 100%; border-radius: 20px 20px 0 0; padding: 20px; max-height: 70vh; overflow-y: auto; }
-    .mood-modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-    #mood-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-    .mood-option { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 14px 8px; border-radius: 14px; border: 2px solid var(--mood-color, #ddd); background: none; cursor: pointer; font-size: 13px; }
-    .mood-option-emoji { font-size: 28px; }
-  </style>
+  <link rel="stylesheet" href="css/verification.css">
+  <link rel="stylesheet" href="css/stories-home.css">
+
+  <link rel="stylesheet" href="css/report-dialog.css">
 </head>
 <body class="dir-rtl">
   <header class="y-header" id="y-header"></header>
 
   <main class="container">
-    <div id="mood-bar"></div>
+    <section id="stories-bar" aria-label="القصص"></section>
+    <div id="home-story-modal" class="home-story-modal"><div class="home-story-box"><div class="story-modal-head"><strong>أضف قصتك</strong><button type="button" id="home-story-modal-close" class="icon-btn-plain">✕</button></div><form id="home-story-form"><textarea class="form-control" name="caption" maxlength="500" placeholder="اكتب شيئًا عن لحظتك…"></textarea><label class="form-label" for="home-story-file">صورة أو فيديو (اختياري)</label><input class="form-control" id="home-story-file" name="file" type="file" accept="image/*,video/*"><div id="home-story-file-label" class="form-hint">تظهر القصة 24 ساعة</div><div class="story-mood-row"><label><input type="radio" name="mood_key" value="happy"> 😊 سعيد</label><label><input type="radio" name="mood_key" value="sad"> 😔 حزين</label></div><button class="btn btn-primary btn-block" type="submit">نشر القصة</button></form></div></div>
+    <div id="home-story-viewer" class="home-story-viewer"><div class="home-story-box"><div class="story-modal-head"><strong>القصة</strong><button type="button" id="home-story-close" class="icon-btn-plain">✕</button></div><div id="home-story-content" class="home-story-content"></div><p id="home-story-caption" class="home-story-caption"></p><form id="home-story-reply-form" class="story-reply"><input id="home-story-reply" maxlength="500" placeholder="اكتب ردًا على القصة…" aria-label="اكتب ردًا على القصة"><button type="submit" aria-label="إرسال الرد">إرسال</button></form></div></div>
 
     <div class="card composer">
       <div class="composer-top">
@@ -34,15 +32,16 @@
       </div>
 
       <div class="composer-preview" id="composer-preview">
-        <img id="composer-preview-img" src="" alt="معاينة الصورة">
+        <img id="composer-preview-img" src="" alt="معاينة الوسائط"><video id="composer-preview-video" controls></video>
         <button type="button" class="remove-img" id="composer-remove-img">✕</button>
       </div>
 
       <div class="composer-actions">
         <label class="btn btn-outline btn-sm" style="cursor:pointer;">
-          📷 صورة
-          <input type="file" id="composer-image-input" accept="image/jpeg,image/png,image/webp,image/gif" hidden>
+          📷 صورة أو فيديو
+          <input type="file" id="composer-image-input" accept="image/*,video/*" hidden>
         </label>
+        <div class="story-mood-row"><label><input type="radio" name="composer-mood" value="happy"> 😊 سعيد</label><label><input type="radio" name="composer-mood" value="sad"> 😔 حزين</label></div>
 
         <button type="button" id="composer-submit" class="btn btn-primary btn-sm">
           نشر
@@ -58,24 +57,6 @@
     <div id="feed-list"></div>
   </main>
 
-  <div id="mood-modal">
-    <div class="mood-modal-box">
-      <div class="mood-modal-header">
-        <strong>وش مزاجك اليوم؟</strong>
-
-        <button
-          type="button"
-          id="mood-modal-close"
-          class="icon-btn-plain"
-          style="background:none;border:none;font-size:20px;"
-        >
-          ✕
-        </button>
-      </div>
-
-      <div id="mood-grid"></div>
-    </div>
-  </div>
 
   <nav class="y-bottom-nav" id="y-bottom-nav"></nav>
 
@@ -88,6 +69,6 @@
   <script src="js/layout.js"></script>
   <script src="js/post-card.js"></script>
   <script src="js/feed.js"></script>
-  <script src="js/mood.js"></script>
+  <script src="js/stories-home.js"></script>
 </body>
 </html>

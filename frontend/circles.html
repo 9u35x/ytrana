@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#6C5CE7"><title>الدوائر · Ytrana</title>
+  <link rel="stylesheet" href="css/style.css"><link rel="stylesheet" href="css/community.css">
+  <link rel="stylesheet" href="css/report-dialog.css">
+</head>
+<body class="dir-rtl">
+  <header class="y-header" id="y-header"></header>
+  <main class="container feature-page">
+    <a class="feature-back" href="community.html">‹ العودة إلى المجتمع</a>
+    <section id="circle-list-view">
+      <div class="feature-hero card"><span class="feature-icon">◉</span><div><h1>الدوائر</h1><p>مساحات عامة وخاصة للتواصل حول اهتمامات مشتركة.</p></div></div>
+      <form id="circle-create-form" class="card feature-panel feature-form">
+        <h2>أنشئ دائرة</h2>
+        <label class="form-label">اسم الدائرة<input class="form-control" name="name" minlength="3" maxlength="100" required></label>
+        <label class="form-label">الوصف<textarea class="form-control" name="description" maxlength="1000" placeholder="ما الذي يجمع أعضاءها؟"></textarea></label>
+        <div class="feature-form-actions"><label><input type="checkbox" name="is_private"> دائرة خاصة (تحتاج موافقة المشرف)</label></div>
+        <div class="feature-form feature-form-file"><label class="form-label">صورة الدائرة <input class="form-control" type="file" name="image" accept="image/*"></label><label class="form-label">غلاف اختياري <input class="form-control" type="file" name="cover" accept="image/*"></label></div>
+        <button class="btn btn-primary" type="submit">إنشاء الدائرة</button>
+      </form>
+      <div class="feature-search"><input id="circle-search" class="form-control" type="search" placeholder="ابحث في الدوائر العامة…"><button id="circle-search-btn" class="btn btn-outline" type="button">بحث</button></div>
+      <section class="feature-panel card"><h2>دوائري</h2><div id="my-circles-list" class="feature-list"><div class="loading-spinner"></div></div></section>
+      <section class="feature-panel card"><h2>دوائر عامة</h2><div id="circles-list" class="feature-list"><div class="loading-spinner"></div></div></section>
+    </section>
+    <section id="circle-detail-view" class="hidden">
+      <div id="circle-detail"></div>
+      <section id="circle-moderation" class="card feature-panel hidden"><h2>إدارة الدائرة</h2><p class="form-hint">الموافقة على الرسائل متاحة للمالك فقط. صلاحيات المشرف محدودة وتُستبدل كاملة عند الحفظ.</p><div id="circle-pending-list"></div><div id="circle-dm-approvals"></div></section>
+      <form id="circle-post-form" class="card feature-panel feature-form hidden">
+        <h2>منشور جديد في الدائرة</h2><textarea class="form-control" name="content" maxlength="3000" placeholder="شارك شيئًا مع أعضاء الدائرة"></textarea>
+        <label class="form-label">صورة أو فيديو <input class="form-control" type="file" name="media" accept="image/*,video/*"></label>
+        <button class="btn btn-primary" type="submit">نشر</button>
+      </form>
+      <section id="circle-posts" aria-live="polite"></section>
+    </section>
+  </main>
+  <nav class="y-bottom-nav" id="y-bottom-nav"></nav>
+  <script src="js/config.js"></script><script src="js/api.js"></script><script src="js/auth.js"></script><script src="js/theme.js"></script><script src="js/toast.js"></script><script src="js/avatar.js"></script><script src="js/layout.js"></script><script src="js/post-card.js"></script><script src="js/circles.js"></script>
+</body></html>

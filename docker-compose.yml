@@ -1,0 +1,68 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      SECRET_KEY: ${SECRET_KEY:?Set SECRET_KEY in the deployment environment}
+      DATABASE_URL: sqlite:////data/ytrana.db
+      UPLOAD_DIR: /data/uploads
+      MAX_UPLOAD_MB: ${MAX_UPLOAD_MB:-5}
+      MAX_REEL_MB: ${MAX_REEL_MB:-20}
+      ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES:-10080}
+      CORS_ORIGINS: ${YTRANA_PUBLIC_URL:?Set YTRANA_PUBLIC_URL in the deployment environment}
+      BREVO_API_KEY: ${BREVO_API_KEY:-}
+      BREVO_SENDER_EMAIL: ${BREVO_SENDER_EMAIL:-}
+      BREVO_SENDER_NAME: ${BREVO_SENDER_NAME:-Ytrana}
+      TWILIO_ACCOUNT_SID: ${TWILIO_ACCOUNT_SID:-}
+      TWILIO_AUTH_TOKEN: ${TWILIO_AUTH_TOKEN:-}
+      TWILIO_VERIFY_SERVICE_SID: ${TWILIO_VERIFY_SERVICE_SID:-}
+    volumes:
+      - ytrana_data:/data
+    expose:
+      - "8000"
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health', timeout=3)"
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
+  web:
+    build:
+      context: .
+      dockerfile: deploy/Dockerfile.web
+    restart: unless-stopped
+    environment:
+      YTRANA_API_BASE: ${YTRANA_PUBLIC_URL:?Set YTRANA_PUBLIC_URL in the deployment environment}
+    depends_on:
+      api:
+        condition: service_healthy
+    expose:
+      - "80"
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    environment:
+      YTRANA_DOMAIN: ${YTRANA_DOMAIN:?Set YTRANA_DOMAIN in the deployment environment}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - web
+
+volumes:
+  ytrana_data:
+  caddy_data:
+  caddy_config:

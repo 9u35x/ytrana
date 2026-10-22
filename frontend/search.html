@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>البحث — Ytrana</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
@@ -11,9 +11,11 @@
 
   <main class="container">
     <div class="form-group mt-4">
-      <input type="text" id="search-input" class="form-control" placeholder="ابحث عن username أو اسم...">
+      <label class="form-label" for="search-input">اكتشف أشخاصًا في Ytrana</label>
+      <input type="search" id="search-input" class="form-control" placeholder="اسم الشخص أو @اسم_المستخدم" autocomplete="off" inputmode="search" maxlength="60" aria-describedby="search-hint">
+      <p class="form-hint" id="search-hint">تظهر المطابقات الأقرب أولاً.</p>
     </div>
-    <div id="search-results"></div>
+    <div id="search-results" aria-live="polite"><div class="empty-state"><div class="icon">🔍</div><p>اكتب اسمًا أو اسم مستخدم للبحث</p></div></div>
   </main>
 
   <nav class="y-bottom-nav" id="y-bottom-nav"></nav>

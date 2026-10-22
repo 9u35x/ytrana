@@ -1,0 +1,23 @@
+export type UserPublic = {
+  id: number; username: string; full_name: string; bio: string; avatar_url: string | null; created_at: string;
+  is_verified?: boolean; verification_expires_at?: string | null;
+};
+export type AccountVisibility = 'public' | 'private';
+export type CommentPrivacy = 'everyone' | 'followers' | 'following' | 'nobody';
+export type MessagePrivacy = 'everyone' | 'following' | 'followers' | 'nobody';
+export type UserProfile = UserPublic & { followers_count: number; following_count: number; posts_count: number; is_followed_by_me: boolean; account_visibility?: AccountVisibility; follow_request_status?: 'pending' | 'accepted' | 'rejected' | 'cancelled' | null; can_view_content?: boolean; can_view_profile_details?: boolean };
+export type StarLevel = { level: number; name: string; required_followers: number; required_active_days: number; color: string; icon: string; earned: boolean; proposed_priority_bonus_percent: number };
+export type StarsResponse = { level: number; name: string; followers_count: number; active_days: number; progress_percent: number; next_level: number | null; reward: { applied: false; proposed_priority_bonus_percent: number; description: string }; levels: StarLevel[] };
+export type FollowRequest = { id: number; status: 'pending' | 'accepted' | 'rejected' | 'cancelled'; created_at: string; requester: UserPublic; target?: UserPublic };
+export type AuthMethod = 'email' | 'sms' | 'totp';
+export type AuthResponse = { access_token?: string; token_type?: string; user?: UserPublic; requires_otp?: boolean; challenge_id?: string; available_methods?: AuthMethod[]; email_hint?: string | null; phone_hint?: string | null };
+export type MoodKey = 'happy' | 'sad';
+export type Post = { id: number; content: string | null; image_url: string | null; video_url: string | null; mood_key: MoodKey | null; created_at: string; updated_at: string; is_edited: boolean; author: UserPublic; likes_count: number; comments_count: number; liked_by_me: boolean };
+export type Comment = { id: number; post_id: number; content: string; created_at: string; author: UserPublic };
+export type Mood = { id: number; key: MoodKey; label_ar: string; emoji: string; color: string };
+export type MoodStatus = { id: number; mood: Mood; note: string | null; created_at: string; expires_at: string; user: UserPublic };
+export type NotificationItem = { id: number; type: string; actor: UserPublic; post_id: number | null; comment_id: number | null; is_read: boolean; created_at: string };
+export type Conversation = { id: number; other_user: UserPublic; last_message: string | null; last_message_at: string | null; unread_count: number };
+export type DirectMessage = { id: number; conversation_id: number; content: string; is_read: boolean; created_at: string; sender: UserPublic };
+export type Reel = { id: number; caption: string | null; video_url: string; mood_key: MoodKey | null; created_at: string; author: UserPublic; likes_count: number; liked_by_me: boolean; views_count: number; viewed_by_me: boolean };
+export type Story = { id: number; caption: string | null; image_url: string | null; video_url: string | null; mood_key: MoodKey | null; created_at: string; expires_at: string; author: UserPublic; views_count: number; viewed_by_me: boolean };
