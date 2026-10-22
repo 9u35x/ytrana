@@ -53,7 +53,7 @@ os.makedirs(os.path.join(settings.upload_dir, "business"), exist_ok=True)
 app = FastAPI(
     title="Ytrana API",
     description="واجهة برمجية لمنصة التواصل الاجتماعي Ytrana",
-    version="0.1.7",
+    version="0.1.8",
 )
 
 # CORS آمن: يسمح فقط بالمصادر المحددة في .env

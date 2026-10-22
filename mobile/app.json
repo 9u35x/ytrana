@@ -2,7 +2,7 @@
   "expo": {
     "name": "Ytrana",
     "slug": "ytrana-social",
-    "version": "0.1.7",
+    "version": "0.1.8",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -17,7 +17,7 @@
         "foregroundImage": "./assets/icon.png"
       },
       "package": "app.ytrana.social",
-      "versionCode": 8,
+      "versionCode": 9,
       "predictiveBackGestureEnabled": false
     },
     "web": {
